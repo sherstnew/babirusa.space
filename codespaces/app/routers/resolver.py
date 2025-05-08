@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import RedirectResponse
 from fastapi.exceptions import HTTPException
 from app.data.models import UserPort
 
@@ -9,6 +10,6 @@ async def resolve_subdomain(subdomain: str):
   port = await UserPort.find_one(UserPort.username == subdomain)
   
   if port:
-    return {"port": port.port}
+    return RedirectResponse(f"http://127.0.0.1:{str(port.port)}")
   else:
     return HTTPException(404)
