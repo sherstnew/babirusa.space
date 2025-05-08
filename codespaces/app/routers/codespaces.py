@@ -48,7 +48,7 @@ async def launchCodespace(login: LoginRequest) -> str:
                 # hostname=f"user-{login.username}.babirusa.skfx.io",
                 hostname="0.0.0.0",
                 volumes=[f"{babirusaaa_home}/user-{login.username}-config:/home/coder/.config", f"{babirusaaa_home}/user-{login.username}-prj:/home/coder/prj"],
-                network="host",
+                # network="babirusa",
                 environment=["XDG_DATA_HOME=/home/coder/.config", f"PASSWORD={login.password}"],
                 ports={'8080/tcp': port}
             ).id
