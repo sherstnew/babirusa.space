@@ -53,6 +53,8 @@ async def launchCodespace(login: LoginRequest) -> str:
                 ports={'8080/tcp': port}
             ).id
             
+            print(new_container)
+            
             userport = UserPort(username=login.username, port=port)
             await userport.create()
 
