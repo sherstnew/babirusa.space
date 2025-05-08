@@ -56,11 +56,11 @@ async def launchCodespace(login: LoginRequest) -> str:
             userport = UserPort(username=login.username, port=port)
             await userport.create()
 
-            network = client.networks.get('babirusa').attrs
+            # network = client.networks.get('babirusa').attrs
 
-            for cid, payload in network['Containers'].items():
-                if new_container == cid:
-                    ip_address = payload['IPv4Address'].split('/')[0]
+            # for cid, payload in network['Containers'].items():
+            #     if new_container == cid:
+            #         ip_address = payload['IPv4Address'].split('/')[0]
 
             return str(port)
     
