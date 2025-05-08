@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app import MONGO_DSN, ENVIRONMENT, projectConfig
-from app.routers import codespaces
+from app.routers import codespaces, resolver
 
 if ENVIRONMENT == "prod":
     app = FastAPI(
@@ -21,6 +21,7 @@ else:
     )
 
 app.include_router(codespaces.router)
+app.include_router(resolver.router)
 
 @app.on_event('startup')
 async def startup_event():
