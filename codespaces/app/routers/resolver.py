@@ -10,6 +10,6 @@ async def resolve_subdomain(subdomain: str):
   port = await UserPort.find_one(UserPort.username == subdomain)
   
   if port:
-    return RedirectResponse(f"http://127.0.0.1:{str(port.port)}")
+    return RedirectResponse(f"https://{str(port.port)}.babirusa.space")
   else:
     return HTTPException(404)
