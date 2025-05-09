@@ -27,6 +27,12 @@ def request(flow: http.HTTPFlow) -> None:
         flow.websocket_proxy = True
         flow.request.host = "127.0.0.1"
         flow.request.port = new_port
+        flow.request.headers["Connection"] = "upgrade"
+        flow.request.headers["Upgrade"] = "websocket"
+        
+        flow.request.headers["Accept-Encoding"] = "identity"
+        
+        flow.request.headers["Host"] = flow.request.host
         ctx.log.info(f"Перенаправляем {host} → 127.0.0.1:{new_port}")
     else:
         if subdomain == "api":
