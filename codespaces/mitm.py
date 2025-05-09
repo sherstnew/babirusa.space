@@ -28,8 +28,12 @@ def request(flow: http.HTTPFlow) -> None:
         flow.request.port = new_port
         ctx.log.info(f"Перенаправляем {host} → 127.0.0.1:{new_port}")
     else:
-        flow.request.host = "127.0.0.1"
-        flow.request.port = 1111
-        ctx.log.warn(f"Неизвестный поддомен: {host}")
+        if subdomain == "api":
+          flow.request.host = "127.0.0.1"
+          flow.request.port = 999
+        else:  
+          flow.request.host = "127.0.0.1"
+          flow.request.port = 111
+          ctx.log.warn(f"Неизвестный поддомен: {host}")
 
 # Запуск: mitmweb -s subdomain_proxy.py --mode reverse:http://127.0.0.1/
