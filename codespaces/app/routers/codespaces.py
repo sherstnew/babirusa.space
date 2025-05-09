@@ -57,9 +57,9 @@ async def launchCodespace(login: LoginRequest) -> str:
             print(new_container)
             
             container = client.containers.get(new_container)
-            health = container.attrs["State"]["Health"]["Status"]
+            health = container.attrs["State"]
             
-            print(health)
+            print(health, container.attrs)
             
             userport = UserPort(username=login.username, port=port)
             await userport.create()
