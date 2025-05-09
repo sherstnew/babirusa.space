@@ -40,6 +40,7 @@ async def launchCodespace(login: LoginRequest) -> str:
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseconfig"), os.path.normpath(babirusaaa_home + f"/user-{login.username}-config"))
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseprj"), os.path.normpath(babirusaaa_home + f"/user-{login.username}-prj"))
                 
+            client.images.get("skfx/babirusa-codeserver")
 
             new_container = client.containers.run(
                 'skfx/babirusa-codeserver',
@@ -54,6 +55,11 @@ async def launchCodespace(login: LoginRequest) -> str:
             ).id
             
             print(new_container)
+            
+            container = client.containers.get(new_container)
+            health = container.attrs["State"]["Health"]["Status"]
+            
+            print(health)
             
             userport = UserPort(username=login.username, port=port)
             await userport.create()
