@@ -44,7 +44,6 @@ async def launchCodespace(login: LoginRequest) -> str:
 
             new_container = client.containers.run(
                 'skfx/babirusa-codeserver',
-                auto_remove=True,
                 detach=True,
                 # hostname=f"user-{login.username}.babirusa.skfx.io",
                 hostname="0.0.0.0",
@@ -55,11 +54,6 @@ async def launchCodespace(login: LoginRequest) -> str:
             ).id
             
             print(new_container)
-            
-            container = client.containers.get(new_container)
-            health = container.attrs["State"]
-            
-            print(health, container.attrs)
             
             userport = UserPort(username=login.username, port=port)
             await userport.create()
