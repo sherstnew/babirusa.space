@@ -2,9 +2,9 @@ from fastapi import HTTPException
 from app.utils.security import context_pass
 from app.data.models import Teacher
 from app.data import schemas
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from app import ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY_USER
+from app import ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY
 from app.utils.error import Error
 
 import jwt
@@ -31,24 +31,24 @@ async def create_user(request: schemas.Teacher):
     )
     
     
-async def authenticate_user(data: dict):
-    access_token = await create_token(data)
+async def authenticate_user(data: dict, expires_delta):
+    access_token = await create_token(data, expires_delta)
     
     return access_token
 
 
 async def create_token(data: dict, expires_delta: timedelta = None):
     '''
-        data: email
+        data: login
     '''
     
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, str(SECRET_KEY_USER), algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, str(SECRET_KEY), algorithm=ALGORITHM)
     return encoded_jwt
 
 

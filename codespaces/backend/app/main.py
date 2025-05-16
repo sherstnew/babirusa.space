@@ -1,5 +1,5 @@
 from beanie import init_beanie, Document, UnionDoc
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app import MONGO_DSN, ENVIRONMENT, projectConfig
@@ -19,9 +19,14 @@ else:
         version=projectConfig.__version__,
         description=projectConfig.__description__
     )
+    
+api_router = APIRouter(prefix="/api")
 
-app.include_router(system.router)
-app.include_router(teacher.router)
+api_router.include_router(system.router)
+api_router.include_router(teacher.router)
+
+app.include_router(api_router)
+
 
 @app.on_event('startup')
 async def startup_event():
