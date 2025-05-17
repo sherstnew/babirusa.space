@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from app.data.models import Group
+from app.data.models import Group, Teacher
 from typing import List, Optional
 
-class Teacher(BaseModel):
+class RequestTeacher(BaseModel):
     login: str
     password: str
     
@@ -27,3 +27,8 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     
+class Group(BaseModel):
+    id: str
+    name: str
+    teacher: Teacher
+    pupils: Optional[List[Pupil]]

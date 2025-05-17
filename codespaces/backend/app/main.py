@@ -30,7 +30,8 @@ app.include_router(api_router)
 
 @app.on_event('startup')
 async def startup_event():
-    client = AsyncIOMotorClient(MONGO_DSN)
+    # AsyncIOMotorClient.uuid_representation = 'standard'
+    client = AsyncIOMotorClient(MONGO_DSN, uuidRepresentation='standard')
 
     await init_beanie(
         database=client.get_default_database(),

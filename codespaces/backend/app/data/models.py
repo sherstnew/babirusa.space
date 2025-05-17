@@ -4,21 +4,22 @@ from typing import Optional, List
 from uuid import UUID, uuid4
 
     
+class Group(Document):
+    id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
+    name: str
+    teacher: Link["Teacher"]
+    pupils: Optional[List[Link["Pupil"]]]
+    
 class Teacher(Document):
     id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
     login: str
     hashed_password: str 
     
-class Group(Document):
-    id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
-    name: str
-    pupils: Optional[Link["Pupil"]]
-    
 class Pupil(Document):
     id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
     firstname: str
     lastname: str
-    groups: Optional[Link["Group"]] 
+    groups: Optional[List[Link["Group"]]] 
     
 class SecretAdmin(Document):
     """

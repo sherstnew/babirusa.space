@@ -12,7 +12,7 @@ import jwt
 context_pass = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-async def create_user(request: schemas.Teacher):
+async def create_user(request: schemas.RequestTeacher):
     print(request.login)
     user_exists = await Teacher.find_one(Teacher.login == request.login)
     if user_exists:
@@ -21,11 +21,12 @@ async def create_user(request: schemas.Teacher):
     hashed_password = context_pass.hash(request.password)
     user = Teacher(
         login=request.login,
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        groups=None
     )
     
     await user.create()
-    return schemas.Teacher(
+    return schemas.RequestTeacher(
         login=request.login,
         password=hashed_password
     )

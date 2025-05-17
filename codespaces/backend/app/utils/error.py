@@ -18,6 +18,11 @@ class Error(Exception):
         detail="Login already exists."
     )
     
+    GROUP_EXISTS = HTTPException(
+        status_code=status.HTTP_409_CONFLICT,
+        detail="Group with this name already exists"
+    )
+    
     UNAUTHORIZED_INVALID = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Incorrect login or password."
