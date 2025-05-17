@@ -11,7 +11,7 @@ from app.utils.security import verify_password, get_current_user
 
 from typing import Annotated
 
-import jwt
+import uuid
 
 router = APIRouter(prefix="/teacher", tags=["Teacher"])
 
@@ -51,15 +51,16 @@ async def create_pupil(request: schemas.PupilCreate,
     return schemas.Pupil(
         id=str(pupil.id),
         firstname=pupil.firstname,
-        lastname=pupil.lastname
+        lastname=pupil.lastname,
+        groups=pupil.groups
     )
     
 @router.delete("/pupils/{pupil_id}")
 async def delete_pupil(pupil_id: str,
-                       _: Teacher = Depends(get_current_user)) -> schemas.Pupil:
-    pupil = await Pupil.find_one(Pupil.id == pupil_id)
+                       _: Teacher = Depends(get_current_user)) -> str:
+    pupil = await Pupil.find_one(Pupil.id == uuid.UUID(pupil_id), fetch_links=True)
     if not pupil:
-        return Error.PUPIL_NOT_FOUND_EXCEPTION
+        raise Error.PUPIL_NOT_FOUND_EXCEPTION
     
     await pupil.delete()
     
