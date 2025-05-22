@@ -20,11 +20,15 @@ def request(flow: http.HTTPFlow) -> None:
       
     print(SUBDOMAIN_TO_PORT)
     
-    host = flow.request.pretty_host  # Получаем поддомен (sub1.example.com)
-    subdomain = host.split(".")[0]   # Извлекаем "sub1"
+    host = flow.request.pretty_host
+    subdomain = host.split(".")[0] 
 
     if subdomain in SUBDOMAIN_TO_PORT:
         new_port = SUBDOMAIN_TO_PORT[subdomain]
+        flow.request.headers["Host"] = f"{subdomain}.babirusa.space"
+        # Дополнительно можно передать X-Forwarded-*
+        flow.request.headers["X-Forwarded-Host"] = f"{subdomain}.babirusa.space"
+        flow.request.headers["X-Forwarded-Proto"] = "https"
         flow.websocket_proxy = True
         flow.request.host = new_port
         flow.request.port = 8080

@@ -31,7 +31,7 @@ async def launchCodespace(login: LoginRequest) -> str:
                 'skfx/babirusa-codeserver',
                 detach=True,
                 user=0,
-                command=["--disable-telemetry", "--disable-update-check"],
+                command=["--disable-telemetry", "--disable-update-check", "--log=debug"],
                 # hostname=f"user-{login.username}.babirusa.skfx.io",
                 hostname="0.0.0.0",
                 volumes=[f"{babirusaaa_home}/user-{login.username}-config:/home/coder/.config", f"{babirusaaa_home}/user-{login.username}-prj:/home/coder/prj"],
