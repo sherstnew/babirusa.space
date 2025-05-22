@@ -1,7 +1,6 @@
 import os
 import docker
 from distutils.dir_util import copy_tree
-from app.data.schemas import CodespaceLoginRequest
 from app.data.models import Pupil, UserPort
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
