@@ -16,6 +16,8 @@ class UserLogIn(BaseModel):
     teacher_token: str
     
 class PupilCreate(BaseModel):
+    username: str
+    password: str
     firstname: str
     lastname: str
     

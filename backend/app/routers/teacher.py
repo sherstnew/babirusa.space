@@ -8,6 +8,7 @@ from app.data import schemas
 from app.utils.error import Error
 from app.utils.auth import create_user, authenticate_user
 from app.utils.security import verify_password, get_current_user
+from app.utils.codespaces import launch_codespace
 
 from typing import Annotated
 
@@ -42,14 +43,18 @@ async def log_in_teacher(request: Annotated[OAuth2PasswordRequestForm, Depends()
 async def create_pupil(request: schemas.PupilCreate, 
                        _: Teacher = Depends(get_current_user)) -> schemas.Pupil:
     pupil = Pupil(
+        username=request.username,
         firstname=request.firstname,
         lastname=request.lastname,
         groups=None
     )
     await pupil.create()
     
+    await launch_codespace(pupil.username, request.password)
+    
     return schemas.Pupil(
         id=str(pupil.id),
+        username=pupil.username,
         firstname=pupil.firstname,
         lastname=pupil.lastname,
         groups=pupil.groups

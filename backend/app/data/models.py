@@ -17,9 +17,14 @@ class Teacher(Document):
     
 class Pupil(Document):
     id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
+    username: str
     firstname: str
     lastname: str
     groups: Optional[List[Link["Group"]]] 
+    
+class UserPort(Document):
+    username: str
+    ip: str
     
 class SecretAdmin(Document):
     """
