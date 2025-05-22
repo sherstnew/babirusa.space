@@ -14,7 +14,7 @@ userports = db["UserPort"].find()
 SUBDOMAIN_TO_PORT = {}
 
 for userport in userports:
-  SUBDOMAIN_TO_PORT[userport["username"]] = userport["port"]
+  SUBDOMAIN_TO_PORT[userport["username"]] = userport["ip"]
   
 print(SUBDOMAIN_TO_PORT)
     
@@ -25,14 +25,9 @@ def request(flow: http.HTTPFlow) -> None:
     if subdomain in SUBDOMAIN_TO_PORT:
         new_port = SUBDOMAIN_TO_PORT[subdomain]
         flow.websocket_proxy = True
-        flow.request.host = "127.0.0.1"
-        flow.request.port = new_port
-        # flow.request.headers["Connection"] = "upgrade"
-        
-        # flow.request.headers["Accept-Encoding"] = "gzip"
-        
-        # flow.request.headers["Host"] = flow.request.host
-        ctx.log.info(f"Перенаправляем {host} → 127.0.0.1:{new_port}")
+        flow.request.host = new_port
+        flow.request.port = 8888
+        ctx.log.info(f"Перенаправляем {host} → {new_port}:8080")
     else:
         if subdomain == "api":
           flow.request.host = "127.0.0.1"

@@ -6,4 +6,4 @@ class User(Document):
 
 class UserPort(Document):
     username: str
-    port: int
+    ip: str

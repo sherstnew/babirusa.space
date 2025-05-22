@@ -19,23 +19,8 @@ async def launchCodespace(login: LoginRequest) -> str:
         ex_userport = await UserPort.find_one(UserPort.username == login.username)
         
         if ex_userport:
-            return str(ex_userport.port)
+            return str(ex_userport.ip)
         else:
-            user_ports = await UserPort.find().to_list()
-        
-            used_ports = list(map(lambda x: x["port"], user_ports))
-            
-            global port
-            port = 0
-            
-            if len(used_ports) == 0:
-                port = 1000
-            else:
-                if max(used_ports) + 1 < 52000:
-                    port = max(used_ports) + 1
-                else:
-                    return HTTPException(404)
-
             if not os.path.exists(os.path.normpath(babirusaaa_home + f"/user-{login.username}-config")):
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseconfig"), os.path.normpath(babirusaaa_home + f"/user-{login.username}-config"))
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseprj"), os.path.normpath(babirusaaa_home + f"/user-{login.username}-prj"))
@@ -52,21 +37,18 @@ async def launchCodespace(login: LoginRequest) -> str:
                 volumes=[f"{babirusaaa_home}/user-{login.username}-config:/home/coder/.config", f"{babirusaaa_home}/user-{login.username}-prj:/home/coder/prj"],
                 # network="babirusa",
                 environment=["XDG_DATA_HOME=/home/coder/.config", f"PASSWORD={login.password}"],
-                ports={'8080/tcp': port}
+                # ports={'8080/tcp': port}
             ).id
-            
-            print(new_container)
-            
-            userport = UserPort(username=login.username, port=port)
-            await userport.create()
 
-            # network = client.networks.get('babirusa').attrs
+            network = client.networks.get('bridge').attrs
 
-            # for cid, payload in network['Containers'].items():
-            #     if new_container == cid:
-            #         ip_address = payload['IPv4Address'].split('/')[0]
+            for cid, payload in network['Containers'].items():
+                if new_container == cid:
+                    ip_address = payload['IPv4Address'].split('/')[0]
 
-            return str(port)
+                    userport = UserPort(username=login.username, ip=ip_address)
+                    await userport.create()
+                    return ip_address
     
     else:
         raise HTTPException(403)
