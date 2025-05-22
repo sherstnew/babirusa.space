@@ -27,7 +27,7 @@ def request(flow: http.HTTPFlow) -> None:
         new_port = SUBDOMAIN_TO_PORT[subdomain]
         flow.websocket_proxy = True
         flow.request.host = new_port
-        flow.request.port = 8008
+        flow.request.port = 8080
         ctx.log.info(f"Перенаправляем {host} → {new_port}:8080")
     else:
         if subdomain == "api":
