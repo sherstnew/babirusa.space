@@ -37,7 +37,7 @@ async def launchCodespace(login: LoginRequest) -> str:
                 volumes=[f"{babirusaaa_home}/user-{login.username}-config:/home/coder/.config", f"{babirusaaa_home}/user-{login.username}-prj:/home/coder/prj"],
                 # network="babirusa",
                 environment=["XDG_DATA_HOME=/home/coder/.config", f"PASSWORD={login.password}"],
-                # ports={'8080/tcp': port}
+                ports={'8080/tcp': 8080}
             ).id
 
             network = client.networks.get('bridge').attrs
