@@ -9,16 +9,17 @@ MONGO_DSN = getenv("MONGO_DSN")
 
 client = MongoClient(MONGO_DSN)
 db = client.babirusa
-userports = db["UserPort"].find()
-
-SUBDOMAIN_TO_PORT = {}
-
-for userport in userports:
-  SUBDOMAIN_TO_PORT[userport["username"]] = userport["ip"]
-  
-print(SUBDOMAIN_TO_PORT)
     
 def request(flow: http.HTTPFlow) -> None:
+    userports = db["UserPort"].find()
+
+    SUBDOMAIN_TO_PORT = {}
+
+    for userport in userports:
+      SUBDOMAIN_TO_PORT[userport["username"]] = userport["ip"]
+      
+    print(SUBDOMAIN_TO_PORT)
+    
     host = flow.request.pretty_host  # Получаем поддомен (sub1.example.com)
     subdomain = host.split(".")[0]   # Извлекаем "sub1"
 
