@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends, Body
 from fastapi.security import OAuth2PasswordRequestForm
 
 from datetime import timedelta
@@ -6,11 +6,11 @@ from datetime import timedelta
 from app.data.models import Teacher, Pupil, Group
 from app.data import schemas
 from app.utils.error import Error
-from app.utils.auth import create_user, authenticate_user
+from app.utils.auth import create_user, authenticate_user, create_pupil
 from app.utils.security import verify_password, get_current_user
 from app.utils.codespaces import launch_codespace
 
-from typing import Annotated
+from typing import Annotated, List
 
 import uuid
 
@@ -40,19 +40,19 @@ async def log_in_teacher(request: Annotated[OAuth2PasswordRequestForm, Depends()
     return schemas.Token(access_token=token, token_type="bearer")
     
 @router.post("/pupils/new")
-async def create_pupil(request: schemas.PupilCreate, 
-                       _: Teacher = Depends(get_current_user)) -> schemas.Pupil:
-    pupil = Pupil(
-        username=request.username,
-        firstname=request.firstname,
-        lastname=request.lastname,
-        groups=None
-    )
-    await pupil.create()
+async def teacher_create_pupil(request: schemas.PupilCreate, 
+                       current_teacher: Teacher = Depends(get_current_user)) -> schemas.Pupil_:
+    
+    pupil = await create_pupil(request)
+    
+    if current_teacher.pupils is None:
+        current_teacher.pupils = []
+    current_teacher.pupils.append(pupil)
+    await current_teacher.save()
     
     await launch_codespace(pupil.username, request.password)
     
-    return schemas.Pupil(
+    return schemas.Pupil_(
         id=str(pupil.id),
         username=pupil.username,
         firstname=pupil.firstname,
@@ -72,11 +72,11 @@ async def delete_pupil(pupil_id: str,
     return "OK"
 
 @router.post("/groups/new")
-async def create_group(group_name: Annotated[str, Header()],
+async def create_group(group_name: Annotated[str, Body()],
                        current_teacher: Teacher = Depends(get_current_user)) -> schemas.Group:
     existing_group = await Group.find_one(Group.name == group_name)
     if existing_group:
-        return Error.GROUP_EXISTS
+        raise Error.GROUP_EXISTS
     
     group = Group(
         name=group_name,
@@ -88,11 +88,12 @@ async def create_group(group_name: Annotated[str, Header()],
     return schemas.Group(
         id=str(group.id),
         name=group.name,
+        teacher=group.teacher,
         pupils=group.pupils
     )
 
 @router.get("/groups")
-async def get_teacher_groups(current_teacher: Teacher = Depends(get_current_user)):
+async def get_teacher_groups(current_teacher: Teacher = Depends(get_current_user)) -> List[schemas.Group]:
     groups = await Group.find(Group.teacher.id == current_teacher.id, fetch_links=True).to_list()
     
     return [schemas.Group(
@@ -104,4 +105,71 @@ async def get_teacher_groups(current_teacher: Teacher = Depends(get_current_user
         for group in groups
     ]
     
+@router.post("/groups/pupils")
+async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get_current_user)) -> schemas.Group:
+    group = await Group.find_one(Group.id == uuid.UUID(request.group_id), fetch_links=True)
+    if not group:
+        raise Error.GROUP_NOT_FOUND
 
+    pupils = await Pupil.find({ "_id": { "$in": [uuid.UUID(id) for id in request.pupil_id] } }, fetch_links=True).to_list()
+    if not pupils:
+        raise Error.PUPIL_NOT_FOUND
+    
+    existing_pupil_ids = {str(pupil.id) for pupil in group.pupils} if group.pupils else set()
+    new_pupils = [pupil for pupil in pupils if str(pupil.id) not in existing_pupil_ids]
+    
+    if not new_pupils:
+        raise Error.PUPIL_ALREADY_IN_GROUP 
+
+    if not group.pupils:
+        group.pupils = pupils
+    else:
+        group.pupils.extend(new_pupils)
+        
+    await group.save()
+    
+    for pupil in new_pupils:
+        if not pupil.groups:
+            pupil.groups = []
+        pupil.groups.append(group)  
+        await pupil.save()
+    
+    return schemas.Group(
+        id=str(group.id),
+        name=group.name,
+        teacher=group.teacher,
+        pupils=group.pupils
+    )
+    
+
+@router.delete("/groups/pupils")
+async def remove_pupils_from_group(request: schemas.RemovePupilsRequest,
+                                    _: Teacher = Depends(get_current_user)) -> schemas.Group:
+    group = await Group.find_one(Group.id == uuid.UUID(request.group_id), fetch_links=True)
+    if not group:
+        raise Error.GROUP_NOT_FOUND
+
+    pupil_ids = [uuid.UUID(id) for id in request.pupil_id]
+    pupils = await Pupil.find({"_id": {"$in": pupil_ids}}, fetch_links=True).to_list()
+    
+    if len(pupils) != len(pupil_ids):
+        found_ids = {str(p.id) for p in pupils}
+        missing_ids = [str(pid) for pid in pupil_ids if str(pid) not in found_ids]
+        raise Error.PUPIL_NOT_FOUND.with_detail(f"Missing pupils: {missing_ids}")
+
+    if group.pupils:
+        group.pupils = [p for p in group.pupils if str(p.id) not in request.pupil_id]
+        
+    for pupil in pupils:
+        if pupil.groups:
+            pupil.groups = [g for g in pupil.groups if str(g.id) != request.group_id]
+            await pupil.save()
+    
+    await group.save()
+    
+    return schemas.Group(
+        id=str(group.id),
+        name=group.name,
+        teacher=group.teacher,
+        pupils=group.pupils
+    )

@@ -14,12 +14,14 @@ class Teacher(Document):
     id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
     login: str
     hashed_password: str 
+    pupils: Optional[List[Link["Pupil"]]]
     
 class Pupil(Document):
     id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
     username: str
     firstname: str
     lastname: str
+    hashed_password: str 
     groups: Optional[List[Link["Group"]]] 
     
 class UserPort(Document):

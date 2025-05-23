@@ -8,9 +8,14 @@ class Error(Exception):
         detail="Teacher not found."
     )
     
-    PUPIL_NOT_FOUND_EXCEPTION = HTTPException(
+    PUPIL_NOT_FOUND = HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Pupil not found."
+    )
+    
+    PUPIL_ALREADY_IN_GROUP = HTTPException(
+        status_code=status.HTTP_409_CONFLICT,
+        detail="Pupil already in group."
     )
     
     LOGIN_EXISTS = HTTPException(
@@ -21,6 +26,11 @@ class Error(Exception):
     GROUP_EXISTS = HTTPException(
         status_code=status.HTTP_409_CONFLICT,
         detail="Group with this name already exists"
+    )
+    
+    GROUP_NOT_FOUND = HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Group not found."
     )
     
     UNAUTHORIZED_INVALID = HTTPException(

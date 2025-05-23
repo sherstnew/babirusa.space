@@ -2,11 +2,13 @@ import os
 import docker
 from distutils.dir_util import copy_tree
 from app.data.models import Pupil, UserPort
+from app.utils.security import verify_password
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 async def launch_codespace(username: str, password: str) -> str | None:
     user = await Pupil.find_one(Pupil.username == username)
-    if user and password == user.password:
+    if user and verify_password(password, user.hashed_password):
         client = docker.from_env()
         babirusaaa_home = os.path.normpath(dir_path + '../../../babirusa/')
         

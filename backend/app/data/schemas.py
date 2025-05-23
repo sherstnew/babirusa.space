@@ -1,13 +1,14 @@
 from pydantic import BaseModel
-from app.data.models import Group, Teacher
+from app.data.models import Group, Teacher, Pupil
 from typing import List, Optional
 
 class RequestTeacher(BaseModel):
     login: str
     password: str
     
-class Pupil(BaseModel):
+class Pupil_(BaseModel):
     id: str
+    username: str
     firstname: str
     lastname: str
     groups: Optional[List[Group]]
@@ -34,3 +35,11 @@ class Group(BaseModel):
     name: str
     teacher: Teacher
     pupils: Optional[List[Pupil]]
+    
+class AddPupil(BaseModel):
+    group_id: str
+    pupil_id: List[str]
+    
+class RemovePupilsRequest(BaseModel):
+    group_id: str
+    pupil_id: List[str]
