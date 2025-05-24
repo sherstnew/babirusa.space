@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends, Body, Path
 from fastapi.security import OAuth2PasswordRequestForm
 
 from datetime import timedelta
@@ -44,7 +44,7 @@ async def teacher_create_pupil(request: schemas.PupilCreate,
                        current_teacher: Teacher = Depends(get_current_user)) -> schemas.Pupil_:
     
     pupil = await create_pupil(request)
-    
+
     if current_teacher.pupils is None:
         current_teacher.pupils = []
     current_teacher.pupils.append(pupil)
@@ -61,7 +61,7 @@ async def teacher_create_pupil(request: schemas.PupilCreate,
     )
     
 @router.delete("/pupils/{pupil_id}")
-async def delete_pupil(pupil_id: str,
+async def delete_pupil(pupil_id: Annotated[str, Path()],
                        _: Teacher = Depends(get_current_user)) -> str:
     pupil = await Pupil.find_one(Pupil.id == uuid.UUID(pupil_id), fetch_links=True)
     if not pupil:

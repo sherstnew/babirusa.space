@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MONGO_DSN = getenv("MONGO_DSN")
+MONGO_DSN_TEST = getenv("MONGO_DSN_TEST")
+
 ENVIRONMENT = getenv("ENVIRONMENT")
 
 ALGORITHM = getenv("ALGORITHM")

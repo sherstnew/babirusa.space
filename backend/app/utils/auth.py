@@ -30,9 +30,9 @@ async def create_user(request: schemas.RequestTeacher):
         password=hashed_password
     )
     
-async def create_pupil(request: schemas.RequestTeacher):
-    user_exists = await Pupil.find_one(Pupil.username == request.username)
-    if user_exists:
+async def create_pupil(request: schemas.PupilCreate):
+    pupil_exists = await Pupil.find_one(Pupil.username == request.username)
+    if pupil_exists:
         raise Error.LOGIN_EXISTS
     
     hashed_password = context_pass.hash(request.password)
