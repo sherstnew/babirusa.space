@@ -1,0 +1,11 @@
+.notifications {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  position: fixed;
+  right: 50px;
+  top: 50px;
+  width: 270px;
+  gap: 20px;
+}

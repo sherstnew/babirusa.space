@@ -1,0 +1,27 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  height: 20%;
+}
+
+.header__logo {
+  width: 84px;
+  height: 84px;
+}
+
+.logged {
+  display: flex;
+  gap: 50px;
+  color: #878787;
+  font-size: 22px;
+  @media screen and (max-width: 600px) {
+    display: none;
+  }
+}
+
+.logged__exit {
+  text-decoration: underline;
+  cursor: pointer;
+}

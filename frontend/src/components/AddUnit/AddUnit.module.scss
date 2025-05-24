@@ -1,0 +1,68 @@
+.add {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+}
+
+.header__back {
+  width: 20px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.header__name {
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.form {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.input {
+  width: 100%;
+  height: 50px;
+  border-radius: 15px;
+  border: none;
+  padding-left: 20px;
+  font-size: 16px;
+  font-family: 'SF Pro';
+  font-weight: 200;
+  &::placeholder {
+    font-size: 18px;
+    font-family: 'SF Pro';
+    font-weight: 300;
+  }
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  background-color: #3974A1;
+  color: #ffffff;
+  border-radius: 15px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  font-family: 'SF Pro';
+  font-size: 16px;
+  font-weight: 300;
+}

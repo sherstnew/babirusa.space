@@ -1,0 +1,38 @@
+.qr {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+}
+
+.header__back {
+  width: 20px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.header__name {
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.description {
+  width: 100%;
+  font-size: 24px;
+}
+
+.code {
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 15px;
+}

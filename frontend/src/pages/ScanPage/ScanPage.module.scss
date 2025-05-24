@@ -1,0 +1,69 @@
+.page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+    width: 100vw;
+    height: 100vh;
+    gap: 100px;
+}
+
+.header {
+    width: 100%;
+    text-align: center;
+    font-size: 48px;
+    font-weight: 600;
+    @media screen and (max-width: 600px) {
+        width: 80%;
+        font-size: 24px;
+    }
+}
+
+.help {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    @media screen and (max-width: 600px) {
+        width: 90%;
+        flex-wrap: wrap;
+        gap: 50px;
+    }
+}
+
+.example {
+    width: 100%;
+}
+
+.steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    list-style-type: none;
+    font-size: 20px;
+    @media screen and (max-width: 600px) {
+        font-size: 16px;
+    }
+}
+
+.steps__item {
+    width: 100%;
+    text-align: center;
+}
+
+.button_scan {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 60px;
+    font-weight: 400;
+    border-radius: 15px;
+    background: linear-gradient(92deg, #5236FF 10.31%, #FB36FF 90.71%);
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+}

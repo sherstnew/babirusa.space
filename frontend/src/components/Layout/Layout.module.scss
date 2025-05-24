@@ -1,0 +1,38 @@
+.layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0D0D0D;
+  color: #ffffff;
+  @media screen and (max-width: 600px) {
+      min-height: 100vh;
+  }
+}
+
+.layout_light {
+  background-color: #F3F3F3;
+  color: #000000;
+}
+
+.container {
+  display: flex;
+  width: 80%;
+  height: 60%;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 80%;
+  height: 20%;
+}
+
+.team {
+  color: #666666;
+  font-size: 32px;
+}

@@ -1,0 +1,56 @@
+@keyframes appear {
+  0% {
+    position: relative;
+    right: -500px;
+  }
+  100% {
+    position: relative;
+    right: 50px;
+  }
+}
+
+@keyframes hide {
+  0% {
+    position: relative;
+    right: 50px;
+  }
+  100% {
+    position: relative;
+    right: -500px;
+  }
+}
+
+.notification {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 270px;
+  min-width: 270px;
+  height: 65px;
+  border-radius: 15px;
+  animation: appear 1s 1 forwards;
+  background-color: #fafafa;
+  color: #0D0D0D;
+  padding: 0px 20px;
+  cursor: pointer;
+}
+
+.notification_hidden {
+  animation: hide 1s 1 forwards;
+}
+
+.text {
+  width: 80%;
+  font-weight: 400;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.cross {
+  width: 20%;
+  height: 35%;
+  cursor: pointer;
+  user-select: none;
+}

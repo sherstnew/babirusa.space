@@ -1,0 +1,23 @@
+.work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: #E6E6E6;
+  padding: 15px 20px;
+  border-radius: 15px;
+  font-size: 20px;
+}
+
+.work__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+}
+
+.action {
+  color: #727272;
+  text-decoration: underline;
+  cursor: pointer;
+}
