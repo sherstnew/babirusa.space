@@ -75,10 +75,11 @@ async def teacher_create_pupil(request: schemas.PupilCreate,
         lastname=pupil.lastname
     )
     
-@router.post("/pupils/{pupil_id}/password")
+@router.get("/pupils/{pupil_id}/password")
 async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()], 
                        _: Teacher = Depends(get_current_user)) -> schemas.PupilPassword:
     pupil = await Pupil.find_one(Pupil.id == uuid.UUID(pupil_id))
+    print(pupil, 11)
     if not pupil:
         raise Error.PUPIL_NOT_FOUND
     
@@ -89,7 +90,7 @@ async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()],
     )
     
 @router.get("/pupils")
-async def teacher_get_pupil_passwor(current_teacher: Teacher = Depends(get_current_user)) -> List[schemas.Pupil_]:
+async def teacher_get_pupil_all(current_teacher: Teacher = Depends(get_current_user)) -> List[schemas.Pupil_]:
     return [schemas.Pupil_(
         id=pupil.id,
         username=pupil.username,
@@ -104,8 +105,7 @@ async def delete_pupil(pupil_id: Annotated[str, Path()],
                        _: Teacher = Depends(get_current_user)) -> str:
     pupil = await Pupil.find_one(Pupil.id == uuid.UUID(pupil_id), fetch_links=True)
     if not pupil:
-        raise Error.PUPIL_NOT_FOUND_EXCEPTION
-    
+        raise Error.PUPIL_NOT_FOUND
     await pupil.delete()
     
     return "OK"

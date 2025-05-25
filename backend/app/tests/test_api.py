@@ -9,7 +9,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from app import MONGO_DSN_TEST
 from app.main import app
-from app.data.models import Teacher, Pupil
+from app.data.models import Teacher, Group
 
 
 @pytest_asyncio.fixture
@@ -28,7 +28,7 @@ async def initialize_beanie():
     )
     yield
     await Teacher.delete_all()
-    await Pupil.delete_all()
+    await Group.delete_all()
     
 @pytest_asyncio.fixture
 async def test_teacher(client):
@@ -69,6 +69,8 @@ async def test_login_success(client, test_teacher):
 
 @pytest.mark.asyncio
 async def test_create_pupil(client, test_teacher, monkeypatch):
+    global pupil_id
+    
     mock_docker = MagicMock()
     mock_container = MagicMock()
     mock_network = MagicMock()
@@ -116,6 +118,7 @@ async def test_create_pupil(client, test_teacher, monkeypatch):
 
         assert response.status_code == 200
         data = response.json()
+        pupil_id = data["id"]
         assert data["username"] == pupil_data["username"]
         assert data["firstname"] == pupil_data["firstname"]
 
@@ -130,5 +133,174 @@ async def test_create_pupil(client, test_teacher, monkeypatch):
             pupil_data["username"],
             pupil_data["password"]
         )
-        
-        
+
+@pytest.mark.asyncio
+async def test_create_group(client, test_teacher):
+    login_response = await client.post(
+            "/api/teacher/login",
+            data={
+                "username": test_teacher["login"],
+                "password": test_teacher["password"]
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"}
+        )
+    
+    token = login_response.json()["access_token"]
+    
+    group_data = "Test Group"
+
+    response = await client.post(
+        "/api/teacher/groups/new",
+        json=group_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert response.status_code == 200
+    response_data = response.json()
+    print(response_data['id'])
+    assert response_data["name"] == "Test Group"
+    assert response_data["teacher"]["login"] == test_teacher["login"]
+    assert response_data["pupils"] == []
+    
+@pytest.mark.asyncio
+async def test_get_teacher_groups(client, test_teacher):
+    login_res = await client.post(
+        "/api/teacher/login",
+        data={"username": test_teacher["login"], "password": test_teacher["password"]},
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+    token = login_res.json()["access_token"]
+
+    await client.post(
+        "/api/teacher/groups/new",
+        json= "Group B",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    await client.post(
+        "/api/teacher/groups/new",
+        json= "Group A",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
+    response = await client.get(
+        "/api/teacher/groups",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+    groups = response.json()
+    
+    assert isinstance(groups, list)
+    assert len(groups) == 2 
+
+    group_names = {group["name"] for group in groups}
+    assert group_names == {"Group A", "Group B"}
+
+    unauth_response = await client.get("/api/teacher/groups")
+    assert unauth_response.status_code in (401, 403)
+    
+    
+@pytest.mark.asyncio
+async def test_get_pupil_password(client, test_teacher):
+    global pupil_id
+
+    login_res = await client.post(
+        "/api/teacher/login",
+        data={"username": test_teacher["login"], "password": test_teacher["password"]},
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+    token = login_res.json()["access_token"]  
+
+    response = await client.get(
+        f"/api/teacher/pupils/{pupil_id}/password",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+    
+@pytest.mark.asyncio
+async def test_get_pupils_all(client, test_teacher):
+    global pupil_id
+    
+    login_res = await client.post(
+        "/api/teacher/login",
+        data={"username": test_teacher["login"], "password": test_teacher["password"]},
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+    token = login_res.json()["access_token"]
+
+    response = await client.get(
+        "/api/teacher/pupils",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+    pupils = response.json()
+    assert isinstance(pupils, list)
+    
+@pytest.mark.asyncio
+async def test_update_group_name(client, test_teacher):
+    login_res = await client.post(
+        "/api/teacher/login",
+        data={"username": test_teacher["login"], "password": test_teacher["password"]},
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+    token = login_res.json()["access_token"]
+
+    original_name = "Original Group Name"
+    create_res = await client.post(
+        "/api/teacher/groups/new",
+        json=original_name,
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+    group_id = create_res.json()["id"]
+
+    new_name = "Updated Group Name"
+    update_res = await client.patch(
+        "/api/teacher/groups",
+        json={
+            "group_id": group_id,
+            "new_group_name": new_name
+        },
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert update_res.status_code == 200
+
+    get_res = await client.get(
+        "/api/teacher/groups",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    groups = get_res.json()
+    assert any(g["name"] == new_name for g in groups)
+    assert not any(g["name"] == original_name for g in groups)
+
+    
+#last
+@pytest.mark.asyncio
+async def test_delete_pupil(client, test_teacher):
+    global pupil_id
+    
+    login_response = await client.post(
+            "/api/teacher/login",
+            data={
+                "username": test_teacher["login"],
+                "password": test_teacher["password"]
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"}
+        )
+    print(pupil_id)
+    token = login_response.json()["access_token"]
+    delete_response = await client.delete(
+        f"/api/teacher/pupils/{pupil_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert delete_response.status_code == 200
+    assert delete_response.text == '"OK"'
+    get_response = await client.delete(
+        f"/api/teacher/pupils/{pupil_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert get_response.status_code == 404
