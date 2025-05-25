@@ -16,7 +16,7 @@ export function GroupList(props: IGroupListProps) {
   const [cookies] = useCookies(['SKFX-TEACHER-AUTH']);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/teacher/groups`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups`, {
       headers: {
         authorization: cookies['SKFX-TEACHER-AUTH'],
       },
@@ -25,7 +25,7 @@ export function GroupList(props: IGroupListProps) {
       .then((data: any) => {
         setGroupInfo(data.groups.find((group: any) => group.glid === props.groupId));
         fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/teacher/groups/${props.groupId}/participants`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups/${props.groupId}/participants`,
           {
             headers: {
               authorization: cookies['SKFX-TEACHER-AUTH'],

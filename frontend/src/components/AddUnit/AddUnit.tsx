@@ -19,7 +19,7 @@ export function AddUnit() {
   const createUnit = (event: any) => {
     event.preventDefault();
     if (unitFName !== '' && unitLName !== '' && groupId !== '') {
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/teacher/pupils/new`, {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/pupils/new`, {
         method: 'POST',
         headers: {
           authorization: cookies['SKFX-TEACHER-AUTH'],

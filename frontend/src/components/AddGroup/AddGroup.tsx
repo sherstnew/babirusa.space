@@ -16,7 +16,7 @@ export function AddGroup() {
   const createGroup = (event: any) => {
     event.preventDefault();
     if (groupName !== '') {
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/teacher/groups/new`, {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups/new`, {
         method: 'POST',
         headers: {
           authorization: cookies['SKFX-TEACHER-AUTH'],

@@ -16,7 +16,7 @@ export function Unit(props: IUnitProps) {
   const { notifications, setNotifications } = useContext(NotificationsContext);
 
   const deleteUnit = (unitId: string) => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/teacher/pupils/${unitId}`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/pupils/${unitId}`, {
       method: 'DELETE',
       headers: {
         authorization: cookies['SKFX-TEACHER-AUTH'],

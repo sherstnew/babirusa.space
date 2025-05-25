@@ -1,5 +1,6 @@
 from beanie import init_beanie, Document, UnionDoc
 from fastapi import FastAPI, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app import MONGO_DSN, ENVIRONMENT, projectConfig
@@ -27,6 +28,13 @@ api_router.include_router(teacher.router)
 
 app.include_router(api_router)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event('startup')
 async def startup_event():

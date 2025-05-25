@@ -16,7 +16,7 @@ export function QRLink(props: IQRLinkProps) {
 
   useEffect(() => {
     fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/teacher/pupils/${props.unitId}/connect`,
+      `${import.meta.env.VITE_BACKEND_URL}/api/teacher/pupils/${props.unitId}/connect`,
       {
         headers: {
           authorization: cookies['SKFX-TEACHER-AUTH'],

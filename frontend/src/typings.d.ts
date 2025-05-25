@@ -1,3 +1,4 @@
+import 'vite/client';
 declare module '*.scss';
 declare module '*otf';
 declare module '*png';

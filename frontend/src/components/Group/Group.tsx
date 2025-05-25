@@ -18,7 +18,7 @@ export function Group(props: IGroupProps) {
   const [cookies] = useCookies(['SKFX-TEACHER-AUTH']);
 
   const deleteGroup = (groupId: string) => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/teacher/groups/${groupId}`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups/${groupId}`, {
       method: 'DELETE',
       headers: {
         authorization: cookies['SKFX-TEACHER-AUTH'],

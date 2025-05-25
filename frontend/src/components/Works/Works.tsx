@@ -9,7 +9,7 @@ export function Works() {
   const [cookies] = useCookies(['SKFX-TEACHER-AUTH']);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/`, {
       headers: {
         authorization: cookies['SKFX-TEACHER-AUTH']
       }

@@ -10,7 +10,7 @@ export function Groups(){
   const [cookies] = useCookies(['SKFX-TEACHER-AUTH']);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/teacher/groups`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups`, {
       headers: {
         authorization: cookies['SKFX-TEACHER-AUTH'],
       },

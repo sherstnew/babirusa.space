@@ -12,18 +12,18 @@ export function LoginForm() {
   const auth = (event: any) => {
     event.preventDefault();
     if (!!login && !!password) {
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/teacher/authorize`, {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          email: login,
+          username: login,
           password: password
         })
       }).then(response => response.json())
       .then(data => {
-        setCookie('SKFX-TEACHER-AUTH', data.token);
+        setCookie('SKFX-TEACHER-AUTH', data.access_token);
       })
       .catch(err => {
         console.log(err);
