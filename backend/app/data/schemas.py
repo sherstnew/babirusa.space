@@ -52,3 +52,4 @@ class RemovePupilsRequest(BaseModel):
 class UpdateGroup(BaseModel):
     group_id: str
     new_group_name: str
+    

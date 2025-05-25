@@ -136,6 +136,56 @@ async def get_teacher_groups(current_teacher: Teacher = Depends(get_current_user
         for group in groups
     ]
     
+@router.patch("/groups")
+async def update_teacher_group(request: schemas.UpdateGroup,
+                               _: Teacher = Depends(get_current_user)) -> schemas.Group:
+    group = await Group.find_one(Group.id == uuid.UUID(request.group_id), fetch_links=True)
+    if not group:
+        raise Error.GROUP_NOT_FOUND
+    
+    group.name = request.new_group_name
+    
+    await group.save()
+    
+    return schemas.Group(
+        id=str(group.id),
+        name=group.name,
+        teacher=schemas.Teacher_(
+            id=str(group.teacher.id),
+            login=group.teacher.login,
+            hashed_password=group.teacher.hashed_password,
+            pupils=[schemas.Pupil_(
+                id=str(pupil.id),
+                username=pupil.username,
+                firstname=pupil.firstname,
+                lastname=pupil.lastname
+        )
+            for pupil in group.teacher.pupils
+        ]
+            ),
+        pupils=[schemas.Pupil_(
+            id=str(pupil.id),
+            username=pupil.username,
+            firstname=pupil.firstname,
+            lastname=pupil.lastname
+        )
+            for pupil in group.pupils   
+        ]
+    )
+    
+@router.delete("/groups")
+async def delete_teacher_groups(groups_id: Annotated[List[str], Body()],
+                               _: Teacher = Depends(get_current_user)) -> str:
+    
+    groups = await Group.find({ "_id": { "$in": [uuid.UUID(id) for id in groups_id] }}, fetch_links=True).to_list()
+    if not groups:
+        raise Error.GROUP_NOT_FOUND
+
+    for group in groups:  
+        await group.delete()
+    
+    return "OK"
+    
 @router.post("/groups/pupils")
 async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get_current_user)) -> schemas.Group:
     group = await Group.find_one(Group.id == uuid.UUID(request.group_id), fetch_links=True)
