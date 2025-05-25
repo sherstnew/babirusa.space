@@ -4,43 +4,32 @@ import { Unit } from '../Unit/Unit';
 import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
+import { Group } from '../../types/Group';
+import { Pupil } from '../../types/Pupil';
 
 export interface IGroupListProps {
   groupId: string;
 }
 
 export function GroupList(props: IGroupListProps) {
-  const [units, setUnits] = useState<any[]>([]);
-  const [groupInfo, setGroupInfo] = useState<any>({});
+  const [units, setUnits] = useState<Pupil[]>([]);
+  const [groupInfo, setGroupInfo] = useState<Group>();
 
   const [cookies] = useCookies(['SKFX-TEACHER-AUTH']);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups`, {
       headers: {
-        authorization: cookies['SKFX-TEACHER-AUTH'],
+        Authorization: `Bearer ${cookies['SKFX-TEACHER-AUTH']}`,
       },
     })
       .then((res) => res.json())
-      .then((data: any) => {
-        setGroupInfo(data.groups.find((group: any) => group.glid === props.groupId));
-        fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups/${props.groupId}/participants`,
-          {
-            headers: {
-              authorization: cookies['SKFX-TEACHER-AUTH'],
-            },
-          }
-        )
-          .then((res) => res.json())
-          .then((units) => {
-            if (!!units) {
-              setUnits(units);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+      .then((groups: Group[]) => {
+        const groupInfo = groups.find((group) => group.id === props.groupId);
+        if (groupInfo) {
+          setGroupInfo(groupInfo);
+          setUnits(groupInfo.pupils);
+        }
       })
       .catch((err) => console.log(err));
   }, []);
@@ -51,7 +40,7 @@ export function GroupList(props: IGroupListProps) {
         <Link to='/my/groups'>
           <img src={backIcon} alt='' className={styles.header__back} />
         </Link>
-        <div className={styles.header__name}>{groupInfo.name || ''}</div>
+        <div className={styles.header__name}>{groupInfo?.name || ''}</div>
       </header>
       <div className={styles.units}>
         <header className={styles.units__header}>
@@ -59,11 +48,11 @@ export function GroupList(props: IGroupListProps) {
           <div className={styles.header__column}>Действия</div>
         </header>
         <section className={styles.units__list}>
-          {units.map((unit) => (
+          {units.map((unit, index) => (
             <Unit
-              key={unit.glid}
-              unitId={unit.glid}
-              name={unit.fname + ' ' + unit.lname}
+              key={index}
+              unitId={unit.id}
+              name={unit.firstname + ' ' + unit.lastname}
             />
           ))}
         </section>

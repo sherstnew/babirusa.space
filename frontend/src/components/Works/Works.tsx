@@ -11,7 +11,7 @@ export function Works() {
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/`, {
       headers: {
-        authorization: cookies['SKFX-TEACHER-AUTH']
+        Authorization: `Bearer ${cookies['SKFX-TEACHER-AUTH']}`
       }
     })
     .then(res => res.json())

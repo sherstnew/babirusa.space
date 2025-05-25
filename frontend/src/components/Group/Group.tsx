@@ -21,7 +21,7 @@ export function Group(props: IGroupProps) {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups/${groupId}`, {
       method: 'DELETE',
       headers: {
-        authorization: cookies['SKFX-TEACHER-AUTH'],
+        Authorization: `Bearer ${cookies['SKFX-TEACHER-AUTH']}`,
       }
     })
     .then(res => {

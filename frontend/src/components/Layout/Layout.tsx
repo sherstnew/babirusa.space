@@ -20,11 +20,6 @@ export function Layout (props: ILayoutProps) {
             props.children
           }
         </main>
-        <footer className={styles.footer}>
-          <div className={styles.team}>
-            by skfx
-          </div>
-        </footer>
     </div>
   );
 }

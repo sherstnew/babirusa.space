@@ -19,12 +19,10 @@ export function AddGroup() {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups/new`, {
         method: 'POST',
         headers: {
-          authorization: cookies['SKFX-TEACHER-AUTH'],
+          Authorization: `Bearer ${cookies['SKFX-TEACHER-AUTH']}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: groupName,
-        }),
+        body: JSON.stringify(groupName),
       })
         .then((res) => {
           if (res.status === 200) {

@@ -7,23 +7,27 @@ export function LoginForm() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
-  const [cookies, setCookie] = useCookies(['SKFX-TEACHER-AUTH']);
+  const [, setCookie] = useCookies(['SKFX-TEACHER-AUTH']);
 
   const auth = (event: any) => {
     event.preventDefault();
+
     if (!!login && !!password) {
+      const formData = new URLSearchParams();
+      formData.append("username", login);
+      formData.append("password", password);
+
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: login,
-          password: password
-        })
-      }).then(response => response.json())
+        body: formData
+      }).then((res) => {
+        if (!res.ok) throw new Error(`Status: ${res.status}`);
+        return res.json();
+      })
       .then(data => {
-        setCookie('SKFX-TEACHER-AUTH', data.access_token);
+        if (data.access_token) {
+          setCookie('SKFX-TEACHER-AUTH', data.access_token);
+        }
       })
       .catch(err => {
         console.log(err);
