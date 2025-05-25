@@ -53,3 +53,5 @@ class UpdateGroup(BaseModel):
     group_id: str
     new_group_name: str
     
+class PupilPassword(BaseModel):
+    password: str

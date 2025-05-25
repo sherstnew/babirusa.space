@@ -1,14 +1,16 @@
 import os
 import docker
 from distutils.dir_util import copy_tree
+from app import SECRET_KEY_USER
 from app.data.models import Pupil, UserPort
-from app.utils.security import verify_password
+from cryptography.fernet import Fernet
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+cipher = Fernet(SECRET_KEY_USER)
 
 async def launch_codespace(username: str, password: str) -> str | None:
     user = await Pupil.find_one(Pupil.username == username)
-    if user and verify_password(password, user.hashed_password):
+    if user and password == (cipher.decrypt(user.hashed_password.encode('utf-8')).decode('utf-8')):
         client = docker.from_env()
         babirusaaa_home = os.path.normpath(dir_path + '../../../babirusa/')
         

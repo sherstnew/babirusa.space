@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, Body, Path
+from fastapi import APIRouter, Depends, Body, Path, Query
 from fastapi.security import OAuth2PasswordRequestForm
+from cryptography.fernet import Fernet
 
 from datetime import timedelta
 
+from app import SECRET_KEY_USER
 from app.data.models import Teacher, Pupil, Group
 from app.data import schemas
 from app.utils.error import Error
@@ -15,6 +17,8 @@ from typing import Annotated, List
 import uuid
 
 router = APIRouter(prefix="/teacher", tags=["Teacher"])
+
+cipher = Fernet(SECRET_KEY_USER)
 
 @router.post("/create")
 async def registration_teacher(request: schemas.RequestTeacher) -> schemas.UserLogIn:
@@ -42,8 +46,20 @@ async def log_in_teacher(request: Annotated[OAuth2PasswordRequestForm, Depends()
 @router.post("/pupils/new")
 async def teacher_create_pupil(request: schemas.PupilCreate, 
                        current_teacher: Teacher = Depends(get_current_user)) -> schemas.Pupil_:
+    pupil_exists = await Pupil.find_one(Pupil.username == request.username)
+    if pupil_exists:
+        raise Error.LOGIN_EXISTS
     
-    pupil = await create_pupil(request)
+    hashed_password = cipher.encrypt(request.password.encode('utf-8')).decode('utf-8')
+    pupil = Pupil(
+        username=request.username,
+        firstname=request.firstname,
+        lastname=request.lastname,
+        hashed_password=hashed_password,
+        groups=None
+    )
+    
+    await pupil.create()
 
     if current_teacher.pupils is None:
         current_teacher.pupils = []
@@ -56,9 +72,32 @@ async def teacher_create_pupil(request: schemas.PupilCreate,
         id=str(pupil.id),
         username=pupil.username,
         firstname=pupil.firstname,
-        lastname=pupil.lastname,
-        # groups=pupil.groups
+        lastname=pupil.lastname
     )
+    
+@router.post("/pupils/{pupil_id}/password")
+async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()], 
+                       _: Teacher = Depends(get_current_user)) -> schemas.PupilPassword:
+    pupil = await Pupil.find_one(Pupil.id == uuid.UUID(pupil_id))
+    if not pupil:
+        raise Error.PUPIL_NOT_FOUND
+    
+    decrypted_password = cipher.decrypt(pupil.hashed_password.encode('utf-8')).decode('utf-8')
+    
+    return schemas.PupilPassword(
+        password=decrypted_password
+    )
+    
+@router.get("/pupils")
+async def teacher_get_pupil_passwor(current_teacher: Teacher = Depends(get_current_user)) -> List[schemas.Pupil_]:
+    return [schemas.Pupil_(
+        id=pupil.id,
+        username=pupil.username,
+        firstname=pupil.firstname,
+        lastname=pupil.lastname
+    )
+        for pupil in current_teacher.pupils   
+    ]
     
 @router.delete("/pupils/{pupil_id}")
 async def delete_pupil(pupil_id: Annotated[str, Path()],
@@ -174,7 +213,7 @@ async def update_teacher_group(request: schemas.UpdateGroup,
     )
     
 @router.delete("/groups")
-async def delete_teacher_groups(groups_id: Annotated[List[str], Body()],
+async def delete_teacher_groups(groups_id: Annotated[List[str], Query()],
                                _: Teacher = Depends(get_current_user)) -> str:
     
     groups = await Group.find({ "_id": { "$in": [uuid.UUID(id) for id in groups_id] }}, fetch_links=True).to_list()
