@@ -18,7 +18,7 @@ export function AddUnit() {
   const [password, setPassword] = useState("");
   const [groupId, setGroupId] = useState("");
 
-  const [groups, setGroups] = useState<any[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
 
   const createUnit = (event: any) => {
     event.preventDefault();
@@ -162,13 +162,13 @@ export function AddUnit() {
         />
         <select
           className={styles.input + " " + styles.groupSelect}
-          defaultValue={groups[0] ? groups[0].glid : ""}
+          defaultValue={groups[0] ? groups[0].id : ""}
           onChange={(event) => setGroupId(event.target.value)}
         >
           {groups.map((group) => (
             <option
-              key={group.glid}
-              value={group.glid}
+              key={group.id}
+              value={group.id}
               className={styles.option}
             >
               {group.name}

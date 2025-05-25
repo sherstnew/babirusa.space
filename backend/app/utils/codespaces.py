@@ -19,7 +19,10 @@ async def launch_codespace(username: str, password: str) -> str | None:
         if ex_userport:
             return str(ex_userport.ip)
         else:
-            if not os.path.exists(os.path.normpath(babirusaaa_home + f"/user-{username}-config")):
+            if not os.path.exists(os.path.normpath(babirusaaa_home + f"/baseconfig")):
+                os.makedirs(os.path.normpath(babirusaaa_home + f"/baseconfig"))
+            
+            if (not os.path.exists(os.path.normpath(babirusaaa_home + f"/user-{username}-config"))) or (not os.path.exists(os.path.normpath(babirusaaa_home + f"/user-{username}-prj"))):
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseconfig"), os.path.normpath(babirusaaa_home + f"/user-{username}-config"))
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseprj"), os.path.normpath(babirusaaa_home + f"/user-{username}-prj"))
                 
@@ -30,12 +33,9 @@ async def launch_codespace(username: str, password: str) -> str | None:
                 detach=True,
                 user=0,
                 command=["--disable-telemetry", "--disable-update-check", "--log=debug"],
-                # hostname=f"user-{login.username}.babirusa.skfx.io",
                 hostname="0.0.0.0",
                 volumes=[f"{babirusaaa_home}/user-{username}-config:/home/coder/.config", f"{babirusaaa_home}/user-{username}-prj:/home/coder/prj"],
-                # network="babirusa",
-                environment=["XDG_DATA_HOME=/home/coder/.config", f"PASSWORD={password}"],
-                # ports={'8080/tcp': 8080}
+                environment=["XDG_DATA_HOME=/home/coder/.config", f"PASSWORD={password}", "PWD=/home/coder/prj"],
             ).id
 
             network = client.networks.get('bridge').attrs

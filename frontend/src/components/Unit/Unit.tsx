@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 export interface IUnitProps {
   name: string;
   unitId: string;
+  username: string;
 }
 
 export function Unit(props: IUnitProps) {
@@ -19,7 +20,7 @@ export function Unit(props: IUnitProps) {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/pupils/${unitId}`, {
       method: 'DELETE',
       headers: {
-        authorization: cookies['SKFX-TEACHER-AUTH'],
+        Authorization: `Bearer ${cookies['SKFX-TEACHER-AUTH']}`,
       }
     })
     .then(res => {
@@ -66,8 +67,7 @@ export function Unit(props: IUnitProps) {
         }
       </div>
       <div className={styles.unit__actions}>
-        <Link to="http://test.isch.skfx.io:9000/?folder=/home/coder" className={styles.action}>открыть рабочее пространство</Link>
-        <Link to="/my/qr" className={styles.action}>код привязки</Link>
+        <Link to={`https://${props.username}.babirusa.space`} target='_blank' className={styles.action}>открыть рабочее пространство</Link>
         <div className={styles.action} onClick={() => deleteUnit(props.unitId)}>удалить</div>
       </div>
     </div>

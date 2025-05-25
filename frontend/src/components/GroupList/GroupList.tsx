@@ -53,6 +53,7 @@ export function GroupList(props: IGroupListProps) {
               key={index}
               unitId={unit.id}
               name={unit.firstname + ' ' + unit.lastname}
+              username={unit.username}
             />
           ))}
         </section>
