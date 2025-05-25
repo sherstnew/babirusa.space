@@ -22,7 +22,7 @@ class Pupil(Document):
     firstname: str
     lastname: str
     hashed_password: str 
-    groups: Optional[List[Link["Group"]]] 
+    # groups: Optional[List[Link["Group"]]] 
     
 class UserPort(Document):
     username: str

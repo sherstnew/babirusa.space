@@ -131,3 +131,4 @@ async def test_create_pupil(client, test_teacher, monkeypatch):
             pupil_data["password"]
         )
         
+        

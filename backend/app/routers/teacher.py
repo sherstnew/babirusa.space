@@ -32,7 +32,7 @@ async def registration_teacher(request: schemas.RequestTeacher) -> schemas.UserL
 async def log_in_teacher(request: Annotated[OAuth2PasswordRequestForm, Depends()]) -> schemas.Token:
     user = await Teacher.find_one(Teacher.login == request.username)
     if not user or not verify_password(request.password, user.hashed_password):
-        return Error.UNAUTHORIZED_INVALID
+        raise Error.UNAUTHORIZED_INVALID
     
     token_expires = timedelta(minutes=1440)
     token = await authenticate_user(data={"sub": request.username}, expires_delta=token_expires)
@@ -57,7 +57,7 @@ async def teacher_create_pupil(request: schemas.PupilCreate,
         username=pupil.username,
         firstname=pupil.firstname,
         lastname=pupil.lastname,
-        groups=pupil.groups
+        # groups=pupil.groups
     )
     
 @router.delete("/pupils/{pupil_id}")
@@ -80,7 +80,7 @@ async def create_group(group_name: Annotated[str, Body()],
     
     group = Group(
         name=group_name,
-        teacher=current_teacher.dict(),
+        teacher=current_teacher,
         pupils=None
     )
     await group.insert()
@@ -88,8 +88,20 @@ async def create_group(group_name: Annotated[str, Body()],
     return schemas.Group(
         id=str(group.id),
         name=group.name,
-        teacher=group.teacher,
-        pupils=group.pupils
+        teacher=schemas.Teacher_(
+            id=str(group.teacher.id),
+            login=group.teacher.login,
+            hashed_password=group.teacher.hashed_password,
+            pupils=[schemas.Pupil_(
+                id=str(pupil.id),
+                username=pupil.username,
+                firstname=pupil.firstname,
+                lastname=pupil.lastname
+        )
+            for pupil in current_teacher.pupils
+        ]
+            ),
+        pupils=[]
     )
 
 @router.get("/groups")
@@ -99,8 +111,27 @@ async def get_teacher_groups(current_teacher: Teacher = Depends(get_current_user
     return [schemas.Group(
         id=str(group.id),
         name=group.name,
-        teacher=group.teacher,
-        pupils=group.pupils
+        teacher=schemas.Teacher_(
+            id=str(group.teacher.id),
+            login=group.teacher.login,
+            hashed_password=group.teacher.hashed_password,
+            pupils=[schemas.Pupil_(
+                id=str(pupil.id),
+                username=pupil.username,
+                firstname=pupil.firstname,
+                lastname=pupil.lastname
+        )
+            for pupil in group.teacher.pupils
+        ]
+            ),
+        pupils=[schemas.Pupil_(
+            id=str(pupil.id),
+            username=pupil.username,
+            firstname=pupil.firstname,
+            lastname=pupil.lastname
+        )
+            for pupil in group.pupils   
+        ]
     )
         for group in groups
     ]
@@ -128,17 +159,30 @@ async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get
         
     await group.save()
     
-    for pupil in new_pupils:
-        if not pupil.groups:
-            pupil.groups = []
-        pupil.groups.append(group)  
-        await pupil.save()
-    
     return schemas.Group(
         id=str(group.id),
         name=group.name,
-        teacher=group.teacher,
-        pupils=group.pupils
+        teacher=schemas.Teacher_(
+            id=str(group.teacher.id),
+            login=group.teacher.login,
+            hashed_password=group.teacher.hashed_password,
+            pupils=[schemas.Pupil_(
+                id=str(pupil.id),
+                username=pupil.username,
+                firstname=pupil.firstname,
+                lastname=pupil.lastname
+        )
+            for pupil in group.teacher.pupils
+        ]
+            ),
+        pupils=[schemas.Pupil_(
+            id=str(pupil.id),
+            username=pupil.username,
+            firstname=pupil.firstname,
+            lastname=pupil.lastname
+        )
+            for pupil in group.pupils   
+        ]
     )
     
 
@@ -159,17 +203,31 @@ async def remove_pupils_from_group(request: schemas.RemovePupilsRequest,
 
     if group.pupils:
         group.pupils = [p for p in group.pupils if str(p.id) not in request.pupil_id]
-        
-    for pupil in pupils:
-        if pupil.groups:
-            pupil.groups = [g for g in pupil.groups if str(g.id) != request.group_id]
-            await pupil.save()
     
     await group.save()
     
     return schemas.Group(
         id=str(group.id),
         name=group.name,
-        teacher=group.teacher,
-        pupils=group.pupils
+        teacher=schemas.Teacher_(
+            id=str(group.teacher.id),
+            login=group.teacher.login,
+            hashed_password=group.teacher.hashed_password,
+            pupils=[schemas.Pupil_(
+                id=str(pupil.id),
+                username=pupil.username,
+                firstname=pupil.firstname,
+                lastname=pupil.lastname
+        )
+            for pupil in group.teacher.pupils
+        ]
+            ),
+        pupils=[schemas.Pupil_(
+            id=str(pupil.id),
+            username=pupil.username,
+            firstname=pupil.firstname,
+            lastname=pupil.lastname
+        )
+            for pupil in group.pupils   
+        ]
     )

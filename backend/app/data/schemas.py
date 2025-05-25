@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from app.data.models import Group, Teacher, Pupil
+# from app.data.models import Group, Teacher, Pupil
 from typing import List, Optional
 
 class RequestTeacher(BaseModel):
@@ -11,7 +11,12 @@ class Pupil_(BaseModel):
     username: str
     firstname: str
     lastname: str
-    groups: Optional[List[Group]]
+    
+class Teacher_(BaseModel):
+    id: str
+    login: str
+    hashed_password: str 
+    pupils: Optional[List[Pupil_]]
     
 class UserLogIn(BaseModel):
     teacher_token: str
@@ -33,8 +38,8 @@ class Token(BaseModel):
 class Group(BaseModel):
     id: str
     name: str
-    teacher: Teacher
-    pupils: Optional[List[Pupil]]
+    teacher: Teacher_
+    pupils: Optional[List[Pupil_]]
     
 class AddPupil(BaseModel):
     group_id: str
@@ -43,3 +48,7 @@ class AddPupil(BaseModel):
 class RemovePupilsRequest(BaseModel):
     group_id: str
     pupil_id: List[str]
+    
+class UpdateGroup(BaseModel):
+    group_id: str
+    new_group_name: str
