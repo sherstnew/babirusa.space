@@ -1,10 +1,21 @@
+from contextlib import asynccontextmanager
 from beanie import init_beanie, Document, UnionDoc
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from typing import AsyncIterator
 
 from app import MONGO_DSN, ENVIRONMENT, projectConfig
 from app.routers import system, teacher
+
+@asynccontextmanager
+async def lifespan() -> AsyncIterator[None]:
+    client = AsyncIOMotorClient(MONGO_DSN, uuidRepresentation='standard')
+    await init_beanie(
+        database=client.get_default_database(),
+        document_models=Document.__subclasses__() + UnionDoc.__subclasses__()
+    )
+    yield
 
 if ENVIRONMENT == "prod":
     app = FastAPI(
@@ -35,13 +46,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.on_event('startup')
-async def startup_event():
-    # AsyncIOMotorClient.uuid_representation = 'standard'
-    client = AsyncIOMotorClient(MONGO_DSN, uuidRepresentation='standard')
-
-    await init_beanie(
-        database=client.get_default_database(),
-        document_models=Document.__subclasses__() + UnionDoc.__subclasses__()
-    )

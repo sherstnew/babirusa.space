@@ -5,19 +5,19 @@ from uuid import UUID, uuid4
 
     
 class Group(Document):
-    id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
+    id: UUID = Field(alias="_id", json_schema_extra={"unique": True}, default_factory=uuid4)
     name: str
     teacher: Link["Teacher"]
     pupils: Optional[List[Link["Pupil"]]]
     
 class Teacher(Document):
-    id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
+    id: UUID = Field(alias="_id", json_schema_extra={"unique": True}, default_factory=uuid4)
     login: str
     hashed_password: str 
     pupils: Optional[List[Link["Pupil"]]]
     
 class Pupil(Document):
-    id: UUID = Field(alias="_id", unique=True, default_factory=uuid4)
+    id: UUID = Field(alias="_id", json_schema_extra={"unique": True}, default_factory=uuid4)
     username: str
     firstname: str
     lastname: str
@@ -50,7 +50,7 @@ class AdminFront(Document):
         secret (Link[SecretAdmin]): Link to the SecretAdmin document containing security details.
     """
 
-    username: str = Field(unique=True)
+    username: str = Field(json_schema_extra={"unique": True})
     disabled: bool = Field(default=False)
     full_name: str = Field(default=None)
     secret: Link[SecretAdmin] = Field()

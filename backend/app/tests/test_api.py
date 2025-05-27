@@ -49,7 +49,7 @@ async def test_ping(client):
         assert data == "pong"
         
 @pytest.mark.asyncio
-async def test_login_success(client, test_teacher):
+async def test_login(client, test_teacher):
     form_data = {
         "username": test_teacher["login"],
         "password": test_teacher["password"]
@@ -157,7 +157,6 @@ async def test_create_group(client, test_teacher):
     
     assert response.status_code == 200
     response_data = response.json()
-    print(response_data['id'])
     assert response_data["name"] == "Test Group"
     assert response_data["teacher"]["login"] == test_teacher["login"]
     assert response_data["pupils"] == []
@@ -275,9 +274,133 @@ async def test_update_group_name(client, test_teacher):
     groups = get_res.json()
     assert any(g["name"] == new_name for g in groups)
     assert not any(g["name"] == original_name for g in groups)
+    
+@pytest.mark.asyncio
+async def test_add_pupil_to_group(client, test_teacher):
+    global pupil_id
+    
+    login_res = await client.post(
+        "/api/teacher/login",
+        data={"username": test_teacher["login"], "password": test_teacher["password"]},
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+    token = login_res.json()["access_token"]
+    
+    
+    create_res = await client.post(
+        "/api/teacher/groups/new",
+        json="Group Test",
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+    group_id = create_res.json()["id"]
+
+    request_data = {
+        "group_id": str(group_id),
+        "pupil_id": [str(pupil_id)]
+    }
+    
+    response = await client.post(
+        "/api/teacher/groups/pupils",
+        json=request_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    
+    assert response_data["id"] == str(group_id)
+    assert len(response_data["pupils"]) == 1
+    assert {p["id"] for p in response_data["pupils"]} == {str(pupil_id)}
+    
+@pytest.mark.asyncio
+async def test_remove_pupils_from_group(client, test_teacher):
+    global pupil_id
+    
+    login_res = await client.post(
+        "/api/teacher/login",
+        data={"username": test_teacher["login"], "password": test_teacher["password"]},
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+    token = login_res.json()["access_token"]
+    
+    create_res = await client.post(
+        "/api/teacher/groups/new",
+        json="Group Test",
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+    group_id = create_res.json()["id"]
+
+    request_data = {
+        "group_id": str(group_id),
+        "pupil_id": [str(pupil_id)]
+    }
+    
+    add_res = await client.post(
+        "/api/teacher/groups/pupils",
+        json=request_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert add_res.status_code == 200
+    
+    response = await client.delete(
+        "/api/teacher/groups/pupils",
+        params={ 
+            "group_id": str(group_id),
+            "pupil_id": [str(pupil_id)]
+        },
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    
+    assert response_data["id"] == str(group_id)
+    assert len(response_data["pupils"]) == 0
 
     
-#last
+@pytest.mark.asyncio
+async def test_delete_groups(client, test_teacher):
+    login_res = await client.post(
+        "/api/teacher/login",
+        data={"username": test_teacher["login"], "password": test_teacher["password"]},
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+    token = login_res.json()["access_token"]
+
+    name1 = "Group Name1"
+    name2 = "Group Name2"
+    create_res1 = await client.post(
+        "/api/teacher/groups/new",
+        json=name1,
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+    create_res2 = await client.post(
+        "/api/teacher/groups/new",
+        json=name2,
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+
+    response = await client.delete(
+        "/api/teacher/groups",
+        params={"groups_id": [str(create_res1.json()["id"]), str(create_res2.json()["id"])]},
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+    assert response.text == '"OK"'
+
+    assert await Group.find_one(Group.id == create_res1.json()["id"]) is None
+    assert await Group.find_one(Group.id == create_res2.json()["id"]) is None
+    
+    
 @pytest.mark.asyncio
 async def test_delete_pupil(client, test_teacher):
     global pupil_id

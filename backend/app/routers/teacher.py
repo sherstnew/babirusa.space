@@ -276,13 +276,14 @@ async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get
     
 
 @router.delete("/groups/pupils")
-async def remove_pupils_from_group(request: schemas.RemovePupilsRequest,
+async def remove_pupils_from_group(group_id: Annotated[str, Query()], 
+                                   pupil_id: Annotated[list, Query()],
                                     _: Teacher = Depends(get_current_user)) -> schemas.Group:
-    group = await Group.find_one(Group.id == uuid.UUID(request.group_id), fetch_links=True)
+    group = await Group.find_one(Group.id == uuid.UUID(group_id), fetch_links=True)
     if not group:
         raise Error.GROUP_NOT_FOUND
 
-    pupil_ids = [uuid.UUID(id) for id in request.pupil_id]
+    pupil_ids = [uuid.UUID(id) for id in pupil_id]
     pupils = await Pupil.find({"_id": {"$in": pupil_ids}}, fetch_links=True).to_list()
     
     if len(pupils) != len(pupil_ids):
@@ -291,7 +292,7 @@ async def remove_pupils_from_group(request: schemas.RemovePupilsRequest,
         raise Error.PUPIL_NOT_FOUND.with_detail(f"Missing pupils: {missing_ids}")
 
     if group.pupils:
-        group.pupils = [p for p in group.pupils if str(p.id) not in request.pupil_id]
+        group.pupils = [p for p in group.pupils if str(p.id) not in pupil_id]
     
     await group.save()
     
