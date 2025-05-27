@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Path
 from cryptography.fernet import Fernet
 
 from app import SECRET_KEY_USER
-from app.data.models import Teacher, Pupil
+from app.data.models import Teacher, Pupil, UserIp
 from app.data import schemas
 from app.utils.error import Error
 from app.utils.security import get_current_user
@@ -11,6 +11,8 @@ from app.utils.codespaces import launch_codespace
 from typing import Annotated, List
 
 import uuid
+import docker
+import os
 
 
 router = APIRouter(prefix="/teacher/pupils", tags=["Pupils"])
@@ -82,4 +84,18 @@ async def delete_pupil(pupil_id: Annotated[str, Path()],
         raise Error.PUPIL_NOT_FOUND
     await pupil.delete()
     
+    userip = await UserIp.find_one(UserIp.username == pupil.username)
+    if not userip:
+        raise Error.USER_IP_NOT_FOUND
+    
+    client = docker.from_env()
+    container = client.containers.get(userip.container_id)
+    container.remove(force=True, v=True)
+    
+    for file in os.listdir("/app/tests"):
+        if file == f"user-{pupil.username}-prj":
+            os.remove(f"/app/tests/user-{pupil.username}-prj")
+        if file == f"user-{pupil.username}-config":
+            os.remove(f"/app/tests/user-{pupil.username}-config")
+        
     return "OK"

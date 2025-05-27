@@ -11,7 +11,7 @@ client = MongoClient(MONGO_DSN)
 db = client.babirusa
     
 def request(flow: http.HTTPFlow) -> None:
-    userports = db["UserPort"].find()
+    userports = db["UserIp"].find()
 
     SUBDOMAIN_TO_PORT = {}
 

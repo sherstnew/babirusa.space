@@ -63,7 +63,7 @@
  pytest app/tests/ -v 
  ```
 
-##Покрытие кода тестами
+**Покрытие кода тестами:**
 
  ```shell
  pytest --cov=app/tests

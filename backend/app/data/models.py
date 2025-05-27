@@ -24,9 +24,10 @@ class Pupil(Document):
     hashed_password: str 
     # groups: Optional[List[Link["Group"]]] 
     
-class UserPort(Document):
+class UserIp(Document):
     username: str
     ip: str
+    container_id: str
     
 class SecretAdmin(Document):
     """

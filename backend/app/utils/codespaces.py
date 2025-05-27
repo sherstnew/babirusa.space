@@ -2,7 +2,7 @@ import os
 import docker
 from distutils.dir_util import copy_tree
 from app import SECRET_KEY_USER
-from app.data.models import Pupil, UserPort
+from app.data.models import Pupil, UserIp
 from cryptography.fernet import Fernet
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -14,10 +14,10 @@ async def launch_codespace(username: str, password: str) -> str | None:
         client = docker.from_env()
         babirusaaa_home = os.path.normpath(dir_path + '../../../babirusa/')
         
-        ex_userport = await UserPort.find_one(UserPort.username == username)
+        ex_userip = await UserIp.find_one(UserIp.username == username)
         
-        if ex_userport:
-            return str(ex_userport.ip)
+        if ex_userip:
+            return str(ex_userip.ip)
         else:
             if not os.path.exists(os.path.normpath(babirusaaa_home + f"/baseconfig")):
                 os.makedirs(os.path.normpath(babirusaaa_home + f"/baseconfig"))
@@ -44,7 +44,11 @@ async def launch_codespace(username: str, password: str) -> str | None:
                 if new_container == cid:
                     ip_address = payload['IPv4Address'].split('/')[0]
 
-                    userport = UserPort(username=username, ip=ip_address)
+                    userport = UserIp(
+                                    username=username,
+                                    ip=ip_address,
+                                    container_id=new_container
+                                )
                     await userport.create()
                     return ip_address
     
