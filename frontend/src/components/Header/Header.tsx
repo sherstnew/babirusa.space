@@ -33,9 +33,6 @@ export function Header(props: IHeaderProps) {
       {(cookies['SKFX-SCH-AUTH'] && props.mode !== 'teacher') ||
       (cookies['SKFX-TEACHER-AUTH'] && props.mode === 'teacher') ? (
         <div className={styles.logged}>
-          <span className={styles.logged__user}>
-            Залогинен как Пользователь
-          </span>
           <span className={styles.logged__exit} onClick={logoutAccount}>
             Выйти
           </span>

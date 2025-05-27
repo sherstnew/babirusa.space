@@ -1,7 +1,7 @@
 import styles from "./MyPage.module.scss";
 import { useCookies } from "react-cookie";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Layout } from "../../components/Layout/Layout";
@@ -16,21 +16,36 @@ import { Works } from "../../components/Works/Works";
 export function MyPage() {
   const [cookies] = useCookies(["SKFX-TEACHER-AUTH"]);
 
+  const [tokenValid, setTokenValid] = useState<boolean | null>(null);
+
   const { category, id } = useParams();
 
   useEffect(() => {
     if (!!!category) {
       window.location.href = "/my/groups";
     }
-  }, [category]);
-
-  console.log(id);
+    setTokenValid(null);
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups`, {
+      headers: {
+        Authorization: `Bearer ${cookies["SKFX-TEACHER-AUTH"]}`,
+      },
+    })
+      .then((res) => {
+        if (res.status === 401) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then(() => {
+        setTokenValid(true);
+      })
+      .catch(() => {
+        setTokenValid(false);
+      });
+  }, [category, cookies]);
 
   return (
     <Layout theme="light" mode="teacher">
       <div className={styles.content}>
-        {/* здесь проверка по токену */}
-        {cookies["SKFX-TEACHER-AUTH"] ? (
+        {tokenValid ? (
           <>
             <section className={styles.menu}>
               <div className={styles.menu__options}>
@@ -74,6 +89,8 @@ export function MyPage() {
               )}
             </section>
           </>
+        ) : tokenValid === null ? (
+          "Загрузка..."
         ) : (
           <LoginForm />
         )}
