@@ -1,5 +1,5 @@
-<h1 align="center">Облачные среды разработки для школьников на основе контейнеров с автоматическим развертыванием.</a> 
-<h2 align="center">Запуск серверной части проекта</h2>
+<h1 align="center">Настройка и запуск серверных компонентов</a> 
+<h2 align="center">Запуск backend-части </h2>
 
 ### Необходимо для дальнейшей работы
 
@@ -35,7 +35,7 @@
 5. **Измените /backend/.env:**
 
     ```
-    DATABASE_URL = "mongodb://localhost:27017/yourdb?authSource=admin"
+    MONGO_DSN = "mongodb://localhost:27017/yourdb?authSource=admin"
     MONGO_DSN_TEST = 'mongodb://localhost:27017/yourdbTest?authSource=admin'
     ENVIRONMENT = 'home'
     ALGORITHM = "HS256"
@@ -49,6 +49,11 @@
     ```shell
     uvicorn app.main:app
     ```
+<h2 align="center">Документация API</h2>
+
+Для получения информации об API перейдите по пути [http://127.0.0.1:8080/docs](http://127.0.0.1:8080/docs).
+
+На данной странице предоставлена Swagger документация.
 
 <h2 align="center">Запуск тестов</h2>
 
