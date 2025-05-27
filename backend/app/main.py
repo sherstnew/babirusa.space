@@ -6,7 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from typing import AsyncIterator
 
 from app import MONGO_DSN, ENVIRONMENT, projectConfig
-from app.routers import system, teacher
+from app.routers import system, teacher, group, pupil
 
 @asynccontextmanager
 async def lifespan() -> AsyncIterator[None]:
@@ -36,6 +36,8 @@ api_router = APIRouter(prefix="/api")
 
 api_router.include_router(system.router)
 api_router.include_router(teacher.router)
+api_router.include_router(group.router)
+api_router.include_router(pupil.router)
 
 app.include_router(api_router)
 

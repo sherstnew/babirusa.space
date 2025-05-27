@@ -57,10 +57,16 @@
 
 <h2 align="center">Запуск тестов</h2>
 
-**В любой части проекта выполните команду:**
+**В папке backend выполните команду:**
 
  ```shell
- pytest
+ pytest app/tests/ -v 
+ ```
+
+##Покрытие кода тестами
+
+ ```shell
+ pytest --cov=app/tests
  ```
 
 <h2 align="center">Технические решения</h2>
