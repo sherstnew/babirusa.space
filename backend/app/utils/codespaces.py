@@ -32,10 +32,10 @@ async def launch_codespace(username: str, password: str) -> str | None:
                 'skfx/babirusa-codeserver',
                 detach=True,
                 user=0,
-                command=["--disable-telemetry", "--disable-update-check", "--log=debug", "--open=/home/coder/prj"],
+                command=["--disable-telemetry", "--disable-update-check", "--log=debug"],
                 hostname="0.0.0.0",
                 volumes=[f"{babirusaaa_home}/user-{username}-config:/home/coder/.config", f"{babirusaaa_home}/user-{username}-prj:/home/coder/prj"],
-                environment=["XDG_DATA_HOME=/home/coder/.config", f"PASSWORD={password}", "PWD=/home/coder/prj"],
+                environment=["XDG_DATA_HOME=/home/coder/.config", f"PASSWORD={password}"],
             ).id
 
             network = client.networks.get('bridge').attrs
