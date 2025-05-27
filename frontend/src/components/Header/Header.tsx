@@ -8,7 +8,7 @@ export interface IHeaderProps {
 }
 
 export function Header(props: IHeaderProps) {
-  const [cookies, setCookies, removeCookie] = useCookies([
+  const [cookies, , removeCookie] = useCookies([
     'SKFX-SCH-AUTH',
     'SKFX-TEACHER-AUTH',
   ]);
