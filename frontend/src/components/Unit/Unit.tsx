@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 import { useContext, useState } from "react";
 import { NotificationsContext } from "../../contexts/NotificationsContext";
 import { v4 } from "uuid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export interface IUnitProps {
   name: string;
@@ -12,6 +12,8 @@ export interface IUnitProps {
 }
 
 export function Unit(props: IUnitProps) {
+  const navigate = useNavigate();
+
   const [cookies] = useCookies(["SKFX-TEACHER-AUTH"]);
   const { notifications, setNotifications } = useContext(NotificationsContext);
 
@@ -44,7 +46,7 @@ export function Unit(props: IUnitProps) {
             },
           ]);
         }
-        window.location.href = "/my/groups/";
+        navigate(0);
       })
       .catch((err) => {
         console.log(err);
