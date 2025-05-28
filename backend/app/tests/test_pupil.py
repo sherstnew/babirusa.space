@@ -1,7 +1,9 @@
 import pytest
 from httpx import AsyncClient
 from unittest.mock import AsyncMock, MagicMock, patch
-from app.data.models import Teacher
+from app.data.models import Teacher, UserIp
+
+import uuid
 
 @pytest.mark.asyncio
 async def test_create_pupil(client, test_teacher, monkeypatch):
@@ -57,6 +59,13 @@ async def test_create_pupil(client, test_teacher, monkeypatch):
         pupil_id = data["id"]
         assert data["username"] == pupil_data["username"]
         assert data["firstname"] == pupil_data["firstname"]
+        
+        userip = UserIp(
+            username=pupil_data["username"],
+            ip="123",
+            container_id="123"
+        )
+        await userip.create()
 
         teacher = await Teacher.find_one(
             Teacher.login == test_teacher["login"], 
@@ -195,7 +204,7 @@ async def test_remove_pupils_from_group(client, test_teacher):
     assert len(response_data["pupils"]) == 0
     
 @pytest.mark.asyncio
-async def test_delete_pupil(client, test_teacher):
+async def test_delete_pupil(client, test_teacher, mocker):
     global pupil_id
     
     login_response = await client.post(
@@ -208,6 +217,14 @@ async def test_delete_pupil(client, test_teacher):
         )
 
     token = login_response.json()["access_token"]
+    
+    mock_docker = mocker.patch('docker.from_env')
+    mock_container = mocker.MagicMock()
+    mock_docker.return_value.containers.get.return_value = mock_container
+    
+    mock_os = mocker.patch('os.listdir')
+    mock_os.return_value = []
+
     delete_response = await client.delete(
         f"/api/teacher/pupils/{pupil_id}",
         headers={"Authorization": f"Bearer {token}"}
@@ -215,6 +232,11 @@ async def test_delete_pupil(client, test_teacher):
     
     assert delete_response.status_code == 200
     assert delete_response.text == '"OK"'
+    
+    mock_docker.return_value.containers.get.assert_called_once()
+    mock_container.remove.assert_called_once_with(force=True, v=True)
+    await UserIp.delete_all()
+    
     get_response = await client.delete(
         f"/api/teacher/pupils/{pupil_id}",
         headers={"Authorization": f"Bearer {token}"}

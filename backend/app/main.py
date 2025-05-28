@@ -8,20 +8,22 @@ from typing import AsyncIterator
 from app import MONGO_DSN, ENVIRONMENT, projectConfig
 from app.routers import system, teacher, group, pupil
 
+
 @asynccontextmanager
-async def lifespan() -> AsyncIterator[None]:
+async def lifespan(app: FastAPI):
     client = AsyncIOMotorClient(MONGO_DSN, uuidRepresentation='standard')
     await init_beanie(
         database=client.get_default_database(),
         document_models=Document.__subclasses__() + UnionDoc.__subclasses__()
     )
     yield
-
+    
 if ENVIRONMENT == "prod":
     app = FastAPI(
         title=projectConfig.__projname__,
         version=projectConfig.__version__,
         description=projectConfig.__description__,
+        lifespan=lifespan,
         docs_url=None
     )
 
@@ -29,7 +31,8 @@ else:
     app = FastAPI(
         title=projectConfig.__projname__,
         version=projectConfig.__version__,
-        description=projectConfig.__description__
+        description=projectConfig.__description__,
+        lifespan=lifespan
     )
     
 api_router = APIRouter(prefix="/api")
@@ -48,3 +51,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# @app.on_event('startup')
+# async def startup_event():
+#     # AsyncIOMotorClient.uuid_representation = 'standard'
+#     client = AsyncIOMotorClient(MONGO_DSN, uuidRepresentation='standard')
+
+#     await init_beanie(
+#         database=client.get_default_database(),
+#         document_models=Document.__subclasses__() + UnionDoc.__subclasses__()
+#     )

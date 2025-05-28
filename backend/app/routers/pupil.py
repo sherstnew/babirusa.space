@@ -81,11 +81,13 @@ async def delete_pupil(pupil_id: Annotated[str, Path()],
                        _: Teacher = Depends(get_current_user)) -> str:
     pupil = await Pupil.find_one(Pupil.id == uuid.UUID(pupil_id), fetch_links=True)
     if not pupil:
+        print(123)
         raise Error.PUPIL_NOT_FOUND
     await pupil.delete()
     
     userip = await UserIp.find_one(UserIp.username == pupil.username)
     if not userip:
+        print(1234)
         raise Error.USER_IP_NOT_FOUND
     
     client = docker.from_env()
