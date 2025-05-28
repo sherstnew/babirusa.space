@@ -55,7 +55,6 @@ async def teacher_create_pupil(request: schemas.PupilCreate,
 async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()], 
                        _: Teacher = Depends(get_current_user)) -> schemas.PupilPassword:
     pupil = await Pupil.find_one(Pupil.id == uuid.UUID(pupil_id))
-    print(pupil, 11)
     if not pupil:
         raise Error.PUPIL_NOT_FOUND
     
@@ -68,7 +67,7 @@ async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()],
 @router.get("")
 async def teacher_get_pupil_all(current_teacher: Teacher = Depends(get_current_user)) -> List[schemas.Pupil_]:
     return [schemas.Pupil_(
-        id=pupil.id,
+        id=str(pupil.id),
         username=pupil.username,
         firstname=pupil.firstname,
         lastname=pupil.lastname
@@ -81,23 +80,21 @@ async def delete_pupil(pupil_id: Annotated[str, Path()],
                        _: Teacher = Depends(get_current_user)) -> str:
     pupil = await Pupil.find_one(Pupil.id == uuid.UUID(pupil_id), fetch_links=True)
     if not pupil:
-        print(123)
         raise Error.PUPIL_NOT_FOUND
     await pupil.delete()
     
     userip = await UserIp.find_one(UserIp.username == pupil.username)
     if not userip:
-        print(1234)
         raise Error.USER_IP_NOT_FOUND
     
     client = docker.from_env()
     container = client.containers.get(userip.container_id)
     container.remove(force=True, v=True)
     
-    for file in os.listdir("/app/tests"):
+    for file in os.listdir("/babirusa"):
         if file == f"user-{pupil.username}-prj":
-            os.remove(f"/app/tests/user-{pupil.username}-prj")
+            os.remove(f"/babirusa/user-{pupil.username}-prj")
         if file == f"user-{pupil.username}-config":
-            os.remove(f"/app/tests/user-{pupil.username}-config")
+            os.remove(f"/babirusa/user-{pupil.username}-config")
         
     return "OK"

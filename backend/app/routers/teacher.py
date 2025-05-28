@@ -20,7 +20,6 @@ async def registration_teacher(request: schemas.RequestTeacher) -> schemas.UserL
     
     token_expires = timedelta(minutes=1440)
     token = await authenticate_user(data={"sub": request.login}, expires_delta=token_expires)
-    print(token)
     return schemas.UserLogIn(
         teacher_token=str(token)
     )

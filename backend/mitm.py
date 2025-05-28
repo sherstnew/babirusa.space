@@ -18,7 +18,6 @@ def request(flow: http.HTTPFlow) -> None:
     for userport in userports:
       SUBDOMAIN_TO_PORT[userport["username"]] = userport["ip"]
       
-    print(SUBDOMAIN_TO_PORT)
     
     host = flow.request.pretty_host
     subdomain = host.split(".")[0] 
