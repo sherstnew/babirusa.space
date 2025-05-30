@@ -1,5 +1,15 @@
-# syntax=docker/dockerfile:1
-FROM codercom/code-server:latest
+FROM python:3.9
 
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-RUN sudo apt update && sudo apt -y install build-essential python3 python3-pip default-jre default-jdk golang-go nodejs
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5000"]
+
+EXPOSE 5000
