@@ -8,10 +8,10 @@ import { Layout } from "../../components/Layout/Layout";
 import { LoginForm } from "../../components/LoginForm/LoginForm";
 import { Groups } from "../../components/Groups/Groups";
 import { GroupList } from "../../components/GroupList/GroupList";
-// import { QRLink } from '../../components/QRLink/QRLink';
 import { AddUnit } from "../../components/AddUnit/AddUnit";
 import { AddGroup } from "../../components/AddGroup/AddGroup";
 import { Works } from "../../components/Works/Works";
+import { UnitsList } from "../../components/UnitsList/UnitsList";
 
 export function MyPage() {
   const [cookies] = useCookies(["SKFX-TEACHER-AUTH"]);
@@ -24,23 +24,31 @@ export function MyPage() {
     if (!!!category) {
       window.location.href = "/my/groups";
     }
+  }, [category]);
+
+  useEffect(() => {
     setTokenValid(null);
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups`, {
-      headers: {
-        Authorization: `Bearer ${cookies["SKFX-TEACHER-AUTH"]}`,
-      },
-    })
-      .then((res) => {
-        if (res.status === 401) throw new Error("Unauthorized");
-        return res.json();
+    if (cookies["SKFX-TEACHER-AUTH"]) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups`, {
+        headers: {
+          Authorization: `Bearer ${cookies["SKFX-TEACHER-AUTH"]}`,
+        },
       })
-      .then(() => {
-        setTokenValid(true);
-      })
-      .catch(() => {
-        setTokenValid(false);
-      });
-  }, [category, cookies]);
+        .then((res) => {
+          if (res.status === 401) throw new Error("Unauthorized");
+          return res.json();
+        })
+        .then(() => {
+          setTokenValid(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          setTokenValid(false);
+        });
+    } else {
+      setTokenValid(false);
+    }
+  }, [cookies]);
 
   return (
     <Layout theme="light" mode="teacher">
@@ -49,20 +57,19 @@ export function MyPage() {
           <>
             <section className={styles.menu}>
               <div className={styles.menu__options}>
-                <Link
-                  to="/my/groups"
-                  className={
-                    category === "groups"
-                      ? styles.menu__option + " " + styles.menu__option_selected
-                      : styles.menu__option
-                  }
-                >
-                  Мои классы
+                <Link to="/my/groups" className={styles.menu__option}>
+                  Панель
                 </Link>
               </div>
               <div className={styles.menu__buttons}>
+                <Link to="/my/groups" className={styles.button}>
+                  Группы
+                </Link>
+                <Link to="/my/units" className={styles.button}>
+                  Ученики
+                </Link>
                 <Link to="/my/addUnit" className={styles.button}>
-                  Добавить ученика
+                  Создать ученика
                 </Link>
                 <Link to="/my/addGroup" className={styles.button}>
                   Создать группу
@@ -84,6 +91,8 @@ export function MyPage() {
                 <AddGroup />
               ) : category === "groups" && !!id ? (
                 <GroupList groupId={id} />
+              ) : category === "units" ? (
+                <UnitsList />
               ) : (
                 <Groups />
               )}

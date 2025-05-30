@@ -2,10 +2,12 @@
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+  align-content: flex-start;
   flex-wrap: wrap;
   gap: 50px;
   width: 100%;
   height: 100%;
+  min-height: 70vh;
 }
 
 .main {
@@ -37,7 +39,7 @@
 .menu__option {
   font-size: 40px;
   font-weight: 500;
-  color: #afafaf;
+  color: #000000;
   text-decoration: none;
   cursor: pointer;
   @media screen and (max-width: 600px) {
@@ -45,15 +47,11 @@
   }
 }
 
-.menu__option_selected {
-  color: #000000;
-}
-
 .menu__buttons {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 50px;
+  gap: 10px;
 }
 
 .button {
@@ -61,7 +59,7 @@
   justify-content: center;
   align-items: center;
   padding: 15px 20px;
-  background-color: #3974A1;
+  background-color: #e31759;
   color: #ffffff;
   border-radius: 15px;
   cursor: pointer;

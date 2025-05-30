@@ -25,8 +25,9 @@ export function LoginForm() {
         return res.json();
       })
       .then(data => {
+        console.log(data);
         if (data.access_token) {
-          setCookie('SKFX-TEACHER-AUTH', data.access_token, { domain: '.babirusa.space', path: '/' });
+          setCookie('SKFX-TEACHER-AUTH', data.access_token, {path: '/'});
         }
       })
       .catch(err => {

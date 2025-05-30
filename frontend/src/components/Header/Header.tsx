@@ -1,44 +1,35 @@
-import { useCookies } from 'react-cookie';
-import styles from './Header.module.scss';
-import graduationHat from '../../static/icons/graduation-hat.png';
-import { Link } from 'react-router-dom';
+import { useCookies } from "react-cookie";
+import styles from "./Header.module.scss";
+import graduationHat from "../../static/icons/graduation-hat.png";
+import { Link } from "react-router-dom";
 
 export interface IHeaderProps {
-  mode?: 'student' | 'teacher';
+  mode?: "student" | "teacher";
 }
 
 export function Header(props: IHeaderProps) {
-  const [cookies, , removeCookie] = useCookies([
-    'SKFX-SCH-AUTH',
-    'SKFX-TEACHER-AUTH',
-  ]);
-
-  const logoutAccount = () => {
-    if (props.mode === 'teacher') {
-      removeCookie('SKFX-TEACHER-AUTH');
-    } else {
-      removeCookie('SKFX-SCH-AUTH');
-    }
-  };
+  const [cookies, , removeCookie] = useCookies(["SKFX-TEACHER-AUTH"]);
 
   return (
     <header className={styles.header}>
-      <Link to={props.mode === 'teacher' ? '/my/groups' : '/'}>
+      <Link to={props.mode === "teacher" ? "/my/groups" : "/"}>
         <img
           src={graduationHat}
-          alt='Логотип'
+          alt="Логотип"
           className={styles.header__logo}
         />
       </Link>
-      {(cookies['SKFX-SCH-AUTH'] && props.mode !== 'teacher') ||
-      (cookies['SKFX-TEACHER-AUTH'] && props.mode === 'teacher') ? (
+      {cookies["SKFX-TEACHER-AUTH"] ? (
         <div className={styles.logged}>
-          <span className={styles.logged__exit} onClick={logoutAccount}>
+          <span
+            className={styles.logged__exit}
+            onClick={() => removeCookie("SKFX-TEACHER-AUTH", {path: '/'})}
+          >
             Выйти
           </span>
         </div>
       ) : (
-        ''
+        ""
       )}
     </header>
   );

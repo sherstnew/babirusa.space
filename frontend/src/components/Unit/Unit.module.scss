@@ -9,6 +9,10 @@
   font-size: 20px;
 }
 
+.unit__name {
+  font-weight: 500;
+}
+
 .unit__actions {
   display: flex;
   justify-content: flex-end;
@@ -17,7 +21,11 @@
 }
 
 .action {
-  color: #727272;
-  text-decoration: underline;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: #e31759;
+  color: #ffffff;
   cursor: pointer;
+  font-size: 16px;
+  text-decoration: none;
 }
