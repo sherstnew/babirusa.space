@@ -7,6 +7,7 @@ load_dotenv()
 
 MONGO_DSN = getenv("MONGO_DSN")
 MITM_MODE = getenv("MITM_MODE")
+IP_ADDRESS = getenv("IP_ADDRESS")
 
 client = MongoClient(MONGO_DSN)
 db = client.babirusa
@@ -33,10 +34,10 @@ def request(flow: http.HTTPFlow) -> None:
             flow.request.port = 8080
         else:
             if path == "api":
-                flow.request.host = "127.0.0.1"
+                flow.request.host = IP_ADDRESS
                 flow.request.port = 5000
             else:
-                flow.request.host = "127.0.0.1"
+                flow.request.host = IP_ADDRESS
                 flow.request.port = 1000
     else:
         subdomain = host.split(".")[0]
@@ -50,8 +51,8 @@ def request(flow: http.HTTPFlow) -> None:
             flow.request.port = 8080
         else:
             if subdomain == "api":
-                flow.request.host = "127.0.0.1"
+                flow.request.host = IP_ADDRESS
                 flow.request.port = 5000
             else:
-                flow.request.host = "127.0.0.1"
+                flow.request.host = IP_ADDRESS
                 flow.request.port = 1000
