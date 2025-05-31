@@ -29,7 +29,7 @@ services:
     image: skfx/babirusa-codeserver
     build:
       context: ./backend
-      dockerfile: Dockerfile.babirusa
+      dockerfile: Dockerfile.codeserver
     restart: "no"
     entrypoint: ["echo", "Build-only mode: Container not started"]
     command: ["exit", "0"]
