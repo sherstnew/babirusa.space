@@ -1,9 +1,12 @@
-FROM python:3.9
-
-RUN apt-get update && apt-get install -y mitmproxy \
-    && rm -rf /var/lib/apt/lists/*
+FROM python:3.9-slim
 
 WORKDIR /app
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY ../backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY mitm.py .
 
