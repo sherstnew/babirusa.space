@@ -58,11 +58,9 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-    command: >
-      sh -c "
-      mongosh admin --eval 'db.createUser({ user: \"$$MONGO_INITDB_ROOT_USERNAME\", pwd: \"$$MONGO_INITDB_ROOT_PASSWORD\", roles: [ { role: \"root\", db: \"admin\" } ] })' &&
-      mongosh admin -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --eval 'db.getSiblingDB(\"babirusa\").createCollection(\"init\"); db.getSiblingDB(\"babirusa-test\").createCollection(\"init\")'
-      "
+    environment:
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 
 volumes:
   mongo_data:
