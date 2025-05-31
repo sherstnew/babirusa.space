@@ -6,7 +6,7 @@ services:
       - ./frontend/.env
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.frontend
     ports:
       - "1000:80"
     volumes:
@@ -14,8 +14,8 @@ services:
 
   mitm:
     build:
-      context: ./mitmproxy
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile.mitmproxy
     ports:
       - "8080:8080"
     env_file:
@@ -23,7 +23,7 @@ services:
     depends_on:
       - mongo
     volumes:
-      - ./mitmproxy:/app
+      - ./backend:/app
 
   babirusa-codeserver:
     image: skfx/babirusa-codeserver
@@ -37,7 +37,7 @@ services:
   app:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.backend
     ports:
       - "5000:5000"
     env_file:
