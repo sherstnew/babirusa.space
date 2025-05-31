@@ -12,9 +12,8 @@ services:
       - "0.0.0.0:1000:80"
     volumes:
       - ./frontend:/app
-    networks:
-      - default
-
+    network_mode: bridge
+    
   mitm:
     build:
       context: ./backend
@@ -28,8 +27,7 @@ services:
       - mongo
     volumes:
       - ./backend:/app
-    networks:
-      - default
+    network_mode: bridge
 
   babirusa-codeserver:
     image: skfx/babirusa-codeserver
@@ -39,8 +37,7 @@ services:
     restart: "no"
     entrypoint: ["echo", "Build-only mode: Container not started"]
     command: ["exit", "0"]
-    networks:
-      - default
+    network_mode: bridge
 
   backend:
     build:
@@ -58,8 +55,7 @@ services:
       - babirusa-codeserver
     volumes:
       - ./backend:/app
-    networks:
-      - default
+    network_mode: bridge
 
   mongo:
     image: mongo:latest
@@ -75,14 +71,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-    networks:
-      - default
+    network_mode: bridge
 
 volumes:
   mongo_data:
-
-
-networks:
-  default:
-    name: bridge
-    external: true
