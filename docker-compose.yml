@@ -12,6 +12,8 @@ services:
       - "0.0.0.0:1000:80"
     volumes:
       - ./frontend:/app
+    networks:
+      - default
 
   mitm:
     build:
@@ -26,6 +28,8 @@ services:
       - mongo
     volumes:
       - ./backend:/app
+    networks:
+      - default
 
   babirusa-codeserver:
     image: skfx/babirusa-codeserver
@@ -35,6 +39,8 @@ services:
     restart: "no"
     entrypoint: ["echo", "Build-only mode: Container not started"]
     command: ["exit", "0"]
+    networks:
+      - default
 
   backend:
     build:
@@ -52,6 +58,8 @@ services:
       - babirusa-codeserver
     volumes:
       - ./backend:/app
+    networks:
+      - default
 
   mongo:
     image: mongo:latest
@@ -67,6 +75,14 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    networks:
+      - default
 
 volumes:
   mongo_data:
+
+
+networks:
+  default:
+    name: bridge
+    external: true
