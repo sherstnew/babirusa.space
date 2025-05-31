@@ -59,8 +59,14 @@ services:
     volumes:
       - mongo_data:/data/db
     environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    command: >
+      bash -c '
+      mongod --auth & 
+      sleep 5 && 
+      mongosh -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --eval "db.getSiblingDB(\"babirusa\").createCollection(\"init\"); db.getSiblingDB(\"babirusa-test\").createCollection(\"init\")"
+      '
 
 volumes:
   mongo_data:
