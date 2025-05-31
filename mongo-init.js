@@ -1,6 +1,16 @@
 const babirusaUser = process.env.BABIRUSA_USER;
 const babirusaPassword = process.env.BABIRUSA_PASSWORD;
 
+db = db.getSiblingDB('admin').auth(
+    babirusaUser,
+    babirusaPassword
+);
+db.createUser({
+    user: babirusaUser,
+    pwd: babirusaPassword,
+    roles: ["readWrite"],
+});
+
 db = db.getSiblingDB('babirusa');
 db.createCollection('init');
 db.createUser({
