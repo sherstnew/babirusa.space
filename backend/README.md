@@ -1,6 +1,8 @@
 <h1 align="center">Настройка и запуск серверных компонентов</a> 
 <h2 align="center">Запуск backend-части </h2>
 
+#### Ниже приведена инструкция по запуску только backend-части и mitmproxy, информацию по запуску ВСЕГО проекта указана в корневом README.md
+
 ### Необходимо для дальнейшей работы
 
 - Python 3.8 или выше
@@ -42,12 +44,20 @@
     SECRET_KEY = "YOUR_SECRET_KEY"
     SECRET_KEY_USER = "YOUR_SECRET_KEY_USER"
     ACCESS_TOKEN_EXPIRE_MINUTES=99999
+    MITM_MODE="SUBDOMAIN" # in beta, значения - SUBDOMAIN/PATH
+    IP_ADDRESS="90.156.208.35" # адрес вашего сервера во внешней сети
     
     ```
  6. **Запустите сервер:**
 
     ```shell
     uvicorn app.main:app
+    ```
+    <br>
+ 7. **Подготовьте образ codeserver:**
+
+    ```shell
+    docker build -t skfx/babirusa-codeserver -f Dockerfile.codeserver .
     ```
     <br>
 
@@ -60,6 +70,7 @@
 mitmdump -s mitm.py -p 8080 --set keep_host_header=true
 ```
 
+Вы также можете запустить приложение через Docker с помощью ```Dockerfile.backend``` и ```Dockerfile.mitmproxy```. 
 
 <h2 align="center">Документация API</h2>
 
