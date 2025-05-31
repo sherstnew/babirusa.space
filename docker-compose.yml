@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile.frontend
     restart: always
     ports:
-      - "127.0.0.1:1000:80"
+      - "0.0.0.0:1000:80"
     volumes:
       - ./frontend:/app
 
@@ -18,7 +18,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.mitmproxy
     ports:
-      - "127.0.0.1:8080:8080"
+      - "0.0.0.0:8080:8080"
     restart: always
     env_file:
       - ./backend/.env
@@ -41,7 +41,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.backend
     ports:
-      - "127.0.0.1:5000:5000"
+      - "0.0.0.0:5000:5000"
     restart: always
     env_file:
       - ./backend/.env
@@ -60,7 +60,7 @@ services:
     env_file:
       - .env
     ports:
-      - "127.0.0.1:27017:27017"
+      - "0.0.0.0:27017:27017"
     volumes:
       - mongo_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
