@@ -36,7 +36,7 @@ services:
     entrypoint: ["echo", "Build-only mode: Container not started"]
     command: ["exit", "0"]
 
-  app:
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.backend
