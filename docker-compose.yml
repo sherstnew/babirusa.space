@@ -58,15 +58,10 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-    command: >
-      bash -c '
-      mongod --auth & 
-      sleep 5 && 
-      mongosh -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --eval "db.getSiblingDB(\"babirusa\").createCollection(\"init\"); db.getSiblingDB(\"babirusa-test\").createCollection(\"init\")"
-      '
 
 volumes:
   mongo_data:
