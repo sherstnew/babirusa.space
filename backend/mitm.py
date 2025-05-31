@@ -36,7 +36,7 @@ def request(flow: http.HTTPFlow) -> None:
                 flow.request.host = "backend"
                 flow.request.port = 5000
             else:
-                flow.request.host = "127.0.0.1"
+                flow.request.host = "frontend"
                 flow.request.port = 1000
     else:
         subdomain = host.split(".")[0]
@@ -53,5 +53,5 @@ def request(flow: http.HTTPFlow) -> None:
                 flow.request.host = "backend"
                 flow.request.port = 5000
             else:
-                flow.request.host = "127.0.0.1"
+                flow.request.host = "frontend"
                 flow.request.port = 1000
