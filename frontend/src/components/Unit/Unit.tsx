@@ -146,7 +146,7 @@ export function Unit({ unit, groupId, groups }: IUnitProps) {
   }
 
   function moveUnit(unitId: string, classId: string) {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/gropus/pupils`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups/pupils?group_id=${classId}&pupil_id=${unitId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${cookies["SKFX-TEACHER-AUTH"]}`,
