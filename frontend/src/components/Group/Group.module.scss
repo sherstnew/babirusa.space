@@ -7,14 +7,21 @@
   padding: 15px 20px;
   border-radius: 15px;
   font-size: 20px;
+  @media screen and (max-width: 600px) {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 }
 
 .group__name {
-  width: 30%;
+  width: 40%;
+  @media screen and (max-width: 600px) {
+    width: auto;
+  }
 }
 
 .group__units {
-  width: 30%;
+  width: 40%;
 }
 
 .group__actions {
@@ -24,6 +31,10 @@
   cursor: pointer;
   gap: 20px;
   width: 40%;
+  @media screen and (max-width: 600px) {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
 
 .action {

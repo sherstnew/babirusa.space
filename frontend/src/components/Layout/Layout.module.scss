@@ -8,9 +8,6 @@
   min-height: 100vh;
   background-color: #0D0D0D;
   color: #ffffff;
-  @media screen and (max-width: 600px) {
-      min-height: 100vh;
-  }
 }
 
 .layout_light {
@@ -25,6 +22,10 @@
   margin-top: 30px;
   width: 80%;
   min-height: 70vh;
+  padding-bottom: 50px;
+  @media screen and (max-width: 600px) {
+    width: 90%;
+  }
 }
 
 .team {

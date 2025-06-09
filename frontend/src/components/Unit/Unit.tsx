@@ -5,13 +5,15 @@ import { NotificationsContext } from "../../contexts/NotificationsContext";
 import { v4 } from "uuid";
 import { Link, useNavigate } from "react-router-dom";
 import { Pupil } from "../../types/Pupil";
+import { Group } from "../../types/Group";
 
 export interface IUnitProps {
   unit: Pupil;
   groupId?: string;
+  groups?: Group[];
 }
 
-export function Unit({ unit, groupId }: IUnitProps) {
+export function Unit({ unit, groupId, groups }: IUnitProps) {
   const navigate = useNavigate();
 
   const [cookies] = useCookies(["SKFX-TEACHER-AUTH"]);
@@ -142,6 +144,55 @@ export function Unit({ unit, groupId }: IUnitProps) {
         ]);
       });
   }
+
+  function moveUnit(unitId: string, classId: string) {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/gropus/pupils`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${cookies["SKFX-TEACHER-AUTH"]}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        group_id: classId,
+        pupil_id: [unitId],
+      }),
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          setNotifications([
+            ...notifications,
+            {
+              id: v4(),
+              text: "Ученик успешно перемещен",
+              time: 5000,
+            },
+          ]);
+        } else {
+          setNotifications([
+            ...notifications,
+            {
+              id: v4(),
+              text: "Ошибка перемещения ученика",
+              time: 5000,
+            },
+          ]);
+        }
+        navigate(0);
+      })
+      .catch((err) => {
+        console.log(err);
+
+        setNotifications([
+          ...notifications,
+          {
+            id: v4(),
+            text: "Ошибка перемещения ученика",
+            time: 5000,
+          },
+        ]);
+      });
+  }
+
   return (
     <div className={styles.unit}>
       <div className={styles.unit__name}>
@@ -169,9 +220,31 @@ export function Unit({ unit, groupId }: IUnitProps) {
             Удалить из группы
           </div>
         ) : (
-          <div className={styles.action} onClick={() => deleteUnit(unit.id)}>
-            Удалить
-          </div>
+          <>
+            <div className={styles.action} onClick={() => deleteUnit(unit.id)}>
+              Удалить
+            </div>
+            {groups ? (
+              <select
+                className={styles.input}
+                value={
+                  groups.find(group => group.pupils.find(pupil => pupil.id === unit.id)) ? groups.find(group => group.pupils.find(pupil => pupil.id === unit.id))?.id : "null"
+                }
+                onChange={(evt) => {
+                  if (evt.target.value !== "null") {
+                    moveUnit(unit.id, evt.target.value);
+                  }
+                }}
+              >
+                <option value="null">Выберите класс</option>
+                {groups.map((group) => (
+                  <option value={group.id} key={group.id}>{group.name}</option>
+                ))}
+              </select>
+            ) : (
+              ""
+            )}
+          </>
         )}
       </div>
     </div>
