@@ -48,7 +48,6 @@ services:
     restart: always
     env_file:
       - ./backend/.env
-      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - mongo
       - mitm
@@ -56,6 +55,7 @@ services:
       - babirusa-codeserver
     volumes:
       - ./backend:/app
+      - /var/run/docker.sock:/var/run/docker.sock
     network_mode: bridge
 
   mongo:
