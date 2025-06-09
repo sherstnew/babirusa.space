@@ -65,15 +65,9 @@ export function Group(props: IGroupProps) {
       <div className={styles.group__name}>{props.name}</div>
       <div className={styles.group__units}>{props.units}</div>
       <div className={styles.group__actions}>
-        {
-          props.units === 0
-          ?
-          <div className={styles.action} onClick={() => deleteGroup(props.groupId)}>
-            Удалить
-          </div>
-          :
-          ''
-        }
+        <div className={styles.action} onClick={() => deleteGroup(props.groupId)}>
+          Удалить
+        </div>
         <Link to={`/my/groups/${props.groupId}`} className={styles.action}>Подробнее</Link>
       </div>
     </div>

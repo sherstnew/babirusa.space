@@ -19,7 +19,7 @@ export function Header(props: IHeaderProps) {
           className={styles.header__logo}
         />
       </Link>
-      {cookies["SKFX-TEACHER-AUTH"] ? (
+      {cookies["SKFX-TEACHER-AUTH"] && cookies["SKFX-TEACHER-AUTH"] !== "" ? (
         <div className={styles.logged}>
           <span
             className={styles.logged__exit}
