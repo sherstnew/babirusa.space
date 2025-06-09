@@ -41,8 +41,8 @@ MONGO_DSN = "mongodb://localhost:27017/yourdb?authSource=admin"
 MONGO_DSN_TEST = 'mongodb://localhost:27017/yourdbTest?authSource=admin'
 ENVIRONMENT = 'home'
 ALGORITHM = "HS256"
-SECRET_KEY = "YOUR_SECRET_KEY"
-SECRET_KEY_USER = "YOUR_SECRET_KEY_USER"
+SECRET_KEY = "YOUR_SECRET_KEY" # fernet key
+SECRET_KEY_USER = "YOUR_SECRET_KEY_USER" # fernet key
 ACCESS_TOKEN_EXPIRE_MINUTES=99999
 MITM_MODE="SUBDOMAIN" # in beta, значения - SUBDOMAIN/PATH
 IP_ADDRESS="90.156.208.35" # адрес вашего сервера во внешней сети
