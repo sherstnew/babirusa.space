@@ -196,7 +196,7 @@ export function Unit({ unit, groupId, groups }: IUnitProps) {
   return (
     <div className={styles.unit}>
       <div className={styles.unit__name}>
-        {unit.firstname + " " + unit.lastname + " / " + unit.username}
+        {unit.lastname + " " + unit.firstname + " / " + unit.username}
       </div>
       <div className={styles.unit__actions}>
         <div

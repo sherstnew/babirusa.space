@@ -50,7 +50,7 @@ export function UnitsList() {
           <div className={styles.header__column}>Действия</div>
         </header>
         <section className={styles.units__list}>
-          {groups && units ? units.map((unit, index) => (
+          {groups && units ? units.sort((a, b) => a.lastname.localeCompare(b.lastname, 'ru-RU')).map((unit, index) => (
             <Unit key={index} unit={unit} groups={groups} />
           )) : ''}
         </section>
