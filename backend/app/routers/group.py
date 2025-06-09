@@ -140,8 +140,6 @@ async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get
     existing_pupil_ids = {str(pupil.id) for pupil in group.pupils} if group.pupils else set()
     new_pupils = [pupil for pupil in pupils if str(pupil.id) not in existing_pupil_ids]
     
-    if not new_pupils:
-        raise Error.PUPIL_ALREADY_IN_GROUP 
 
     if not group.pupils:
         group.pupils = pupils
