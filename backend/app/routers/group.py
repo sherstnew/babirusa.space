@@ -137,6 +137,13 @@ async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get
     if not pupils:
         raise Error.PUPIL_NOT_FOUND
     
+    for pupil in pupils:
+        new_groups_pupil = await Group.find({"pupils._id": pupil.id, "_id": {"$ne": group.id}}, fetch_links=True).to_list()
+        
+        for old_group in new_groups_pupil:
+            old_group.pupils = [p for p in old_group.pupils if p.id != pupil.id]
+            await old_group.save()
+    
     existing_pupil_ids = {str(pupil.id) for pupil in group.pupils} if group.pupils else set()
     new_pupils = [pupil for pupil in pupils if str(pupil.id) not in existing_pupil_ids]
     
