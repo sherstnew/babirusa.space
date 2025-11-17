@@ -37,7 +37,8 @@ async def create_group(group_name: Annotated[str, Body()],
                 id=str(pupil.id),
                 username=pupil.username,
                 firstname=pupil.firstname,
-                lastname=pupil.lastname
+                lastname=pupil.lastname,
+                container_status=pupil.container_status
         )
             for pupil in current_teacher.pupils
         ]
@@ -60,7 +61,8 @@ async def get_teacher_groups(current_teacher: Teacher = Depends(get_current_user
                 id=str(pupil.id),
                 username=pupil.username,
                 firstname=pupil.firstname,
-                lastname=pupil.lastname
+                lastname=pupil.lastname,
+                container_status=pupil.container_status
         )
             for pupil in group.teacher.pupils
         ]
@@ -69,7 +71,8 @@ async def get_teacher_groups(current_teacher: Teacher = Depends(get_current_user
             id=str(pupil.id),
             username=pupil.username,
             firstname=pupil.firstname,
-            lastname=pupil.lastname
+            lastname=pupil.lastname,
+            container_status=pupil.container_status
         )
             for pupil in group.pupils   
         ]
@@ -99,7 +102,8 @@ async def update_teacher_group(request: schemas.UpdateGroup,
                 id=str(pupil.id),
                 username=pupil.username,
                 firstname=pupil.firstname,
-                lastname=pupil.lastname
+                lastname=pupil.lastname,
+                container_status=pupil.container_status
         )
             for pupil in group.teacher.pupils
         ]
@@ -108,7 +112,8 @@ async def update_teacher_group(request: schemas.UpdateGroup,
             id=str(pupil.id),
             username=pupil.username,
             firstname=pupil.firstname,
-            lastname=pupil.lastname
+            lastname=pupil.lastname,
+            container_status=pupil.container_status
         )
             for pupil in group.pupils   
         ]
@@ -166,7 +171,8 @@ async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get
                 id=str(pupil.id),
                 username=pupil.username,
                 firstname=pupil.firstname,
-                lastname=pupil.lastname
+                lastname=pupil.lastname,
+                container_status=pupil.container_status
         )
             for pupil in group.teacher.pupils
         ]
@@ -175,7 +181,8 @@ async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get
             id=str(pupil.id),
             username=pupil.username,
             firstname=pupil.firstname,
-            lastname=pupil.lastname
+            lastname=pupil.lastname,
+            container_status=pupil.container_status
         )
             for pupil in group.pupils   
         ]
@@ -214,7 +221,8 @@ async def remove_pupils_from_group(group_id: Annotated[str, Query()],
                 id=str(pupil.id),
                 username=pupil.username,
                 firstname=pupil.firstname,
-                lastname=pupil.lastname
+                lastname=pupil.lastname,
+                container_status=pupil.container_status
         )
             for pupil in group.teacher.pupils
         ]
@@ -223,7 +231,8 @@ async def remove_pupils_from_group(group_id: Annotated[str, Query()],
             id=str(pupil.id),
             username=pupil.username,
             firstname=pupil.firstname,
-            lastname=pupil.lastname
+            lastname=pupil.lastname,
+            container_status=pupil.container_status
         )
             for pupil in group.pupils   
         ]

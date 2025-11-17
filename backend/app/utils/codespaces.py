@@ -3,7 +3,9 @@ import docker
 from distutils.dir_util import copy_tree
 from app import SECRET_KEY_USER
 from app.data.models import Pupil, UserIp
+from typing import List
 from cryptography.fernet import Fernet
+from app.utils.error import Error
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 cipher = Fernet(SECRET_KEY_USER)
@@ -54,6 +56,30 @@ async def launch_codespace(username: str, password: str) -> str | None:
     
     else:
         return None
+    
+
+async def check_container_status(pupils):
+    usernames = []
+    for pupil in pupils:
+        usernames.append(pupil.username)
+        
+    userips = await UserIp.find_many({"_id": {"$in": usernames}}).to_list()
+    if not userips:
+        raise Error.PUPIL_NOT_FOUND
+    
+    client = docker.from_env()
+    pupils = []
+    for userip in userips:
+        pupil = await Pupil.find_one(Pupil.username == userip.username).fetch_links()
+        status = client.containers.get(userip.container_id).status.lower()
+        if pupil.container_status != status:
+            pupil.container_status = status
+            await pupil.save()
+        pupils.append(pupil)
+        
+    return pupils
+        
+    
 
 
 

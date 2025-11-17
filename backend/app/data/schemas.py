@@ -11,6 +11,7 @@ class Pupil_(BaseModel):
     username: str
     firstname: str
     lastname: str
+    container_status: str
     
 class Teacher_(BaseModel):
     id: str

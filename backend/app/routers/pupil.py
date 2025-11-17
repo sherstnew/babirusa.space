@@ -6,7 +6,7 @@ from app.data.models import Teacher, Pupil, UserIp
 from app.data import schemas
 from app.utils.error import Error
 from app.utils.security import get_current_user
-from app.utils.codespaces import launch_codespace
+from app.utils.codespaces import launch_codespace, check_container_status
 
 from typing import Annotated, List
 
@@ -32,7 +32,7 @@ async def teacher_create_pupil(request: schemas.PupilCreate,
         firstname=request.firstname,
         lastname=request.lastname,
         hashed_password=hashed_password,
-        groups=None
+        container_status="running" 
     )
     
     await pupil.create()
@@ -48,8 +48,26 @@ async def teacher_create_pupil(request: schemas.PupilCreate,
         id=str(pupil.id),
         username=pupil.username,
         firstname=pupil.firstname,
-        lastname=pupil.lastname
+        lastname=pupil.lastname,
+        container_status=pupil.container_status
     )
+    
+    
+@router.post('/{username}/codespace')
+async def conteiner(username: str, start: bool) -> str:
+    userip = await UserIp.find_one(UserIp.username == username)
+    if not userip:
+        raise Error.PUPIL_NOT_FOUND
+    
+    client = docker.from_env()
+    container = client.containers.get(userip.container_id)
+    if start:
+        container.start()
+    else:
+        conteiner.stop()
+    
+    return "OK"
+    
     
 @router.get("/{pupil_id}/password")
 async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()], 
@@ -66,11 +84,14 @@ async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()],
     
 @router.get("")
 async def teacher_get_pupil_all(current_teacher: Teacher = Depends(get_current_user)) -> List[schemas.Pupil_]:
+    await check_container_status(current_teacher.pupils)
+    
     return [schemas.Pupil_(
         id=str(pupil.id),
         username=pupil.username,
         firstname=pupil.firstname,
-        lastname=pupil.lastname
+        lastname=pupil.lastname,
+        container_status=pupil.container_status
     )
         for pupil in current_teacher.pupils   
     ]

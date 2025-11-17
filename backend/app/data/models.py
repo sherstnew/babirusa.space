@@ -3,6 +3,7 @@ from pydantic import Field, BaseModel
 from typing import Optional, List
 from uuid import UUID, uuid4
 
+
     
 class Group(Document):
     id: UUID = Field(alias="_id", json_schema_extra={"unique": True}, default_factory=uuid4)
@@ -22,7 +23,7 @@ class Pupil(Document):
     firstname: str
     lastname: str
     hashed_password: str 
-    # groups: Optional[List[Link["Group"]]] 
+    container_status: str  #running, exited, dead
     
 class UserIp(Document):
     username: str
