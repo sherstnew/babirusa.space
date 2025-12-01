@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY mitm.py .
 
-CMD ["mitmdump", "-s", "mitm.py", "-p", "8080", "--set", "keep_host_header=true"]
+CMD ["mitmdump", "-s", "mitm.py", "-p", "8080", "--set", "keep_host_header=true", "--set", "block_global=false"]
 
 EXPOSE 8080
 
