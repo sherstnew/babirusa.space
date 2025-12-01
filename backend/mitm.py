@@ -10,7 +10,7 @@ MITM_MODE = getenv("MITM_MODE")
 IP_ADDRESS = getenv("IP_ADDRESS")
 
 client = MongoClient(MONGO_DSN)
-db = client.Babirusa
+db = client.get_default_database()
 
 def request(flow: http.HTTPFlow) -> None:
     userports = db["UserIp"].find()
