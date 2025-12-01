@@ -45,7 +45,7 @@ async def get_all_teachers(x_admin_password: Annotated[str, Header()] ) -> List[
     if not ADMIN_PANEL_PASSWORD or x_admin_password != ADMIN_PANEL_PASSWORD:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
 
-    teachers = await Teacher.find_all().to_list()
+    teachers = await Teacher.find_all(fetch_links=True).to_list()
     return [schemas.Teacher_(
         id=str(t.id),
         login=t.login,
