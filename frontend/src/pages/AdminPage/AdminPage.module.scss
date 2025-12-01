@@ -1,0 +1,38 @@
+.wrap {
+  padding: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.title {
+  color: var(--text-color);
+  margin-bottom: 16px;
+}
+.form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  color: var(--text-color);
+}
+.button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.error {
+  margin-top: 8px;
+  color: var(--danger-color);
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}

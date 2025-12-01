@@ -29,6 +29,7 @@
 
     ```
     VITE_BACKEND_URL="https://api.babirusa.space"
+    VITE_ADMIN_PANEL_PASSWORD="change_me"
     ```
     где https://api.babirusa.space - адрес бэкенда, может быть установлен просто как 127.0.0.1.
  6. **Запустите dev-сервер:**

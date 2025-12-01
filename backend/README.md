@@ -46,6 +46,7 @@
     ACCESS_TOKEN_EXPIRE_MINUTES=99999
     MITM_MODE="SUBDOMAIN" # in beta, значения - SUBDOMAIN/PATH
     IP_ADDRESS="90.156.208.35" # адрес вашего сервера во внешней сети
+    ADMIN_PANEL_PASSWORD="change_me"
     
     ```
  6. **Запустите сервер:**

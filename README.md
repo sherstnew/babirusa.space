@@ -33,6 +33,7 @@ Root-данные для MongoDB, используемые далее в /backen
 ### /frontend/.env
 ```
 VITE_BACKEND_URL="https://api.babirusa.space"
+VITE_ADMIN_PANEL_PASSWORD="change_me"
 ```
 где https://api.babirusa.space - адрес бэкенда, может быть установлен просто как 127.0.0.1.
 ### /backend/.env
@@ -46,6 +47,7 @@ SECRET_KEY_USER = "YOUR_SECRET_KEY_USER" # fernet key
 ACCESS_TOKEN_EXPIRE_MINUTES=99999
 MITM_MODE="SUBDOMAIN" # in beta, значения - SUBDOMAIN/PATH
 IP_ADDRESS="90.156.208.35" # адрес вашего сервера во внешней сети
+ADMIN_PANEL_PASSWORD="change_me"
 ```
 После запуска MongoDB необходимо создать две базы: основную и тестовую. Соответственно yourdb необходимо поменять на названия созданных баз данных, а также добавить авторизацию по логину и паролю, указанным выше в /.env.
 
