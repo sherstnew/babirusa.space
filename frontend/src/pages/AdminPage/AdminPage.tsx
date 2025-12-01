@@ -85,5 +85,3 @@ export function AdminPage() {
     </Layout>
   );
 }
-
-export default AdminPage;
