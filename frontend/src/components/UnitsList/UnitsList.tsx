@@ -21,7 +21,11 @@ export function UnitsList() {
     })
       .then((res) => res.json())
       .then((units: Pupil[]) => {
-        setUnits(units);
+        if (Array.from(units.keys()).map((n) => String(n)).includes("detail")) {
+          setUnits([]);
+        } else {
+          setUnits(units);
+        }
       })
       .catch((err) => console.log(err));
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/groups`, {
