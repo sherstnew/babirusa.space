@@ -22,6 +22,9 @@ def request(flow: http.HTTPFlow) -> None:
 
     host = flow.request.pretty_host
 
+    if "babirusa.space" not in host:
+        return
+
     if MITM_MODE == "PATH":
         path = host.split("/")[1]
         if path in SUBDOMAIN_TO_PORT:
