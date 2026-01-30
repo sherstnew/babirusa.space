@@ -7,6 +7,11 @@ from app.data.models import Pupil, UserIp
 from typing import List
 from cryptography.fernet import Fernet
 from app.utils.error import Error
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -36,9 +41,9 @@ async def launch_codespace(username: str, password: str) -> str | None:
             if os.path.exists(base_main) and not os.path.exists(user_main):
                 shutil.copy2(base_main, user_main)
             
-            print(1, flush=True)
+            logger.info(1)
             client.images.get("skfx/babirusa-codeserver")
-            print(2, flush=True)
+            logger.info(2)
 
             new_container = client.containers.run(
                 'skfx/babirusa-codeserver',
@@ -57,10 +62,11 @@ async def launch_codespace(username: str, password: str) -> str | None:
             network = client.networks.get('bridge').attrs
 
             for cid, payload in network['Containers'].items():
-                print(cid, payload, new_container, flush=True)
+                logger.info(f"Checking container ID: {cid}")
+                logger.info(1)
                 if new_container == cid:
                     ip_address = payload['IPv4Address'].split('/')[0]
-                    print(3, flush=True)
+                    logger.info(f"Found IP address: {ip_address}")
                     userport = UserIp(
                                     username=username,
                                     ip=ip_address,

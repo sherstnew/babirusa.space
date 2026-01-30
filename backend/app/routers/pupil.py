@@ -14,6 +14,12 @@ import uuid
 import docker
 import os
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 
 router = APIRouter(prefix="/teacher/pupils", tags=["Pupils"])
 
@@ -85,6 +91,7 @@ async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()],
 @router.get("")
 async def teacher_get_pupil_all(current_teacher: Teacher = Depends(get_current_user)) -> List[schemas.Pupil_]:
     print(current_teacher.pupils, flush=True)
+    logger.info(current_teacher.pupils, "pupils")
     await check_container_status(current_teacher.pupils)
     
     return [schemas.Pupil_(
