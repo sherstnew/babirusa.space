@@ -32,6 +32,10 @@ services:
     volumes:
       - ./backend:/app
     network_mode: bridge
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
 
   babirusa-codeserver:
     image: skfx/babirusa-codeserver
