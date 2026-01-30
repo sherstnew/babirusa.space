@@ -36,10 +36,13 @@ async def launch_codespace(username: str, password: str) -> str | None:
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseprj"), os.path.normpath(babirusaaa_home + f"/user-{username}-prj"))
             
             base_main = os.path.join(babirusaaa_home + "/baseprj", "main.py")
-            user_main = os.path.join(babirusaaa_home + f"/user-{username}-prj", "main.py")
+            # user_main = os.path.join(babirusaaa_home + f"/user-{username}-prj", "main.py")
+            user_main = os.path.join(babirusaaa_home, "main.py")
 
+            user_prj_path = os.path.join(babirusaaa_home, f"user-{username}-prj")
             if os.path.exists(base_main) and not os.path.exists(user_main):
                 shutil.copy2(base_main, user_main)
+                copy_tree(os.path.join(babirusaaa_home, "baseprj"), user_prj_path)
         
             client.images.get("skfx/babirusa-codeserver")
 
