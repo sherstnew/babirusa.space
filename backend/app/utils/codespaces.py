@@ -36,9 +36,9 @@ async def launch_codespace(username: str, password: str) -> str | None:
             if os.path.exists(base_main) and not os.path.exists(user_main):
                 shutil.copy2(base_main, user_main)
             
-            print(1)
+            print(1, flush=True)
             client.images.get("skfx/babirusa-codeserver")
-            print(2)
+            print(2, flush=True)
 
             new_container = client.containers.run(
                 'skfx/babirusa-codeserver',
@@ -57,10 +57,10 @@ async def launch_codespace(username: str, password: str) -> str | None:
             network = client.networks.get('bridge').attrs
 
             for cid, payload in network['Containers'].items():
-                print(cid, payload, new_container)
+                print(cid, payload, new_container, flush=True)
                 if new_container == cid:
                     ip_address = payload['IPv4Address'].split('/')[0]
-                    print(3)
+                    print(3, flush=True)
                     userport = UserIp(
                                     username=username,
                                     ip=ip_address,
