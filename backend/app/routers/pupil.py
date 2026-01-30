@@ -120,6 +120,8 @@ async def delete_pupil(pupil_id: Annotated[str, Path()],
     container = client.containers.get(userip.container_id)
     container.remove(force=True, v=True)
     
+    await userip.delete()
+    
     # for file in os.listdir("/babirusa"):
     #     if file == f"user-{pupil.username}-prj":
     #         os.remove(f"/babirusa/user-{pupil.username}-prj")
