@@ -91,9 +91,9 @@ async def check_container_status(pupils):
     pupils = []
     for userip in userips:
         pupil = await Pupil.find_one(Pupil.username == userip.username)
-        print(pupil, 'pupil', flush=True)
-        if pupil:
-            pupil = pupil.fetch_links()
+        # print(pupil, 'pupil', flush=True)
+        # if pupil:
+        #     pupil = pupil.fetch_links()
         status = client.containers.get(userip.container_id).status.lower()
         if pupil.container_status != status:
             pupil.container_status = status
