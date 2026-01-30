@@ -82,18 +82,18 @@ async def check_container_status(pupils):
     for pupil in pupils:
         usernames.append(pupil.username)
         
-    # logger.info(usernames)
     userips = await UserIp.find_many({"username": {"$in": usernames}}).to_list()
     print(userips, flush=True)
     if not userips:
-        # logger.info("1")
         raise Error.PUPIL_NOT_FOUND
     
     client = docker.from_env()
     pupils = []
     for userip in userips:
-        print(userip, 'userip', flush=True)
-        pupil = await Pupil.find_one(Pupil.username == userip.username).fetch_links()
+        pupil = await Pupil.find_one(Pupil.username == userip.username)
+        print(pupil, 'pupil', flush=True)
+        if pupil:
+            pupil = pupil.fetch_links()
         status = client.containers.get(userip.container_id).status.lower()
         if pupil.container_status != status:
             pupil.container_status = status
