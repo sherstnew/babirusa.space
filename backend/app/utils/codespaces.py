@@ -34,10 +34,14 @@ async def launch_codespace(username: str, password: str) -> str | None:
                 'skfx/babirusa-codeserver',
                 detach=True,
                 user=0,
-                command=["--disable-telemetry", "--disable-update-check", "--log=debug"],
+                command=["--disable-telemetry", "--disable-update-check", "--log=debug", "/home/coder/prj"],
                 hostname="0.0.0.0",
                 volumes=[f"{babirusaaa_home}/user-{username}-config:/home/coder/.config", f"{babirusaaa_home}/user-{username}-prj:/home/coder/prj"],
                 environment=["XDG_DATA_HOME=/home/coder/.config", f"PASSWORD={password}"],
+                mem_limit="512m",
+                mem_reservation="256m",
+                nano_cpus=500000000,
+                cpu_shares=512,
             ).id
 
             network = client.networks.get('bridge').attrs
