@@ -56,3 +56,6 @@ class UpdateGroup(BaseModel):
     
 class PupilPassword(BaseModel):
     password: str
+    
+class CreateTemplate(BaseModel):
+    code: str

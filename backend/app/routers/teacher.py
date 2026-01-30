@@ -7,13 +7,15 @@ from app.data.models import Teacher
 from app.data import schemas
 from app.utils.error import Error
 from app.utils.auth import create_user, authenticate_user
-from app.utils.security import verify_password
+from app.utils.security import verify_password, get_current_user
 
 from typing import Annotated
 from typing import List
 import uuid
 from app import ADMIN_PANEL_PASSWORD
 from fastapi import status
+
+import os
 
 router = APIRouter(prefix="/teacher", tags=["Teacher"])
 
@@ -72,4 +74,11 @@ async def delete_teacher(teacher_id: str, x_admin_password: Annotated[str, Heade
         raise Error.TEACHER_NOT_FOUND_EXCEPTION
 
     await teacher.delete()
+    
+    
+@router.post("/template")
+async def create_code_temlate(request: schemas.CreateTemplate, current_teacher: Teacher = Depends(get_current_user)) -> str:
+    with open(os.path.dirname(os.path.realpath(__file__)) + '../../../babirusa/baseprj') as f:
+        f.write(request.code)
+        
     return "OK"

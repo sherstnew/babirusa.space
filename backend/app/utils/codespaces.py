@@ -1,11 +1,13 @@
 import os
 import docker
+import shutil
 from distutils.dir_util import copy_tree
 from app import SECRET_KEY_USER
 from app.data.models import Pupil, UserIp
 from typing import List
 from cryptography.fernet import Fernet
 from app.utils.error import Error
+
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 cipher = Fernet(SECRET_KEY_USER)
@@ -27,8 +29,16 @@ async def launch_codespace(username: str, password: str) -> str | None:
             if (not os.path.exists(os.path.normpath(babirusaaa_home + f"/user-{username}-config"))) or (not os.path.exists(os.path.normpath(babirusaaa_home + f"/user-{username}-prj"))):
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseconfig"), os.path.normpath(babirusaaa_home + f"/user-{username}-config"))
                 copy_tree(os.path.normpath(babirusaaa_home + "/baseprj"), os.path.normpath(babirusaaa_home + f"/user-{username}-prj"))
-                
+            
+            base_main = os.path.join(babirusaaa_home + "/baseprj", "main.py")
+            user_main = os.path.join(babirusaaa_home + "/baseprj", "main.py")
+
+            if os.path.exists(base_main) and not os.path.exists(user_main):
+                shutil.copy2(base_main, user_main)
+            
+            print(1)
             client.images.get("skfx/babirusa-codeserver")
+            print(2)
 
             new_container = client.containers.run(
                 'skfx/babirusa-codeserver',
@@ -47,9 +57,10 @@ async def launch_codespace(username: str, password: str) -> str | None:
             network = client.networks.get('bridge').attrs
 
             for cid, payload in network['Containers'].items():
+                print(cid, payload, new_container)
                 if new_container == cid:
                     ip_address = payload['IPv4Address'].split('/')[0]
-
+                    print(3)
                     userport = UserIp(
                                     username=username,
                                     ip=ip_address,

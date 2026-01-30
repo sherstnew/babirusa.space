@@ -84,6 +84,7 @@ async def teacher_get_pupil_passwor(pupil_id: Annotated[str, Path()],
     
 @router.get("")
 async def teacher_get_pupil_all(current_teacher: Teacher = Depends(get_current_user)) -> List[schemas.Pupil_]:
+    print(current_teacher.pupils)
     await check_container_status(current_teacher.pupils)
     
     return [schemas.Pupil_(
