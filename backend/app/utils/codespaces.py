@@ -40,10 +40,8 @@ async def launch_codespace(username: str, password: str) -> str | None:
 
             if os.path.exists(base_main) and not os.path.exists(user_main):
                 shutil.copy2(base_main, user_main)
-            
-            logger.info(1)
+        
             client.images.get("skfx/babirusa-codeserver")
-            logger.info(2)
 
             new_container = client.containers.run(
                 'skfx/babirusa-codeserver',
@@ -62,8 +60,7 @@ async def launch_codespace(username: str, password: str) -> str | None:
             network = client.networks.get('bridge').attrs
 
             for cid, payload in network['Containers'].items():
-                logger.info(f"Checking container ID: {cid}")
-                logger.info(1)
+                # logger.info(f"Checking container ID: {cid}")
                 if new_container == cid:
                     ip_address = payload['IPv4Address'].split('/')[0]
                     logger.info(f"Found IP address: {ip_address}")
@@ -72,6 +69,7 @@ async def launch_codespace(username: str, password: str) -> str | None:
                                     ip=ip_address,
                                     container_id=new_container
                                 )
+                    logger.info(f"Creating UserIp entry for user")
                     await userport.create()
                     return ip_address
     
@@ -86,6 +84,7 @@ async def check_container_status(pupils):
         
     userips = await UserIp.find_many({"_id": {"$in": usernames}}).to_list()
     if not userips:
+        logger.info("1")
         raise Error.PUPIL_NOT_FOUND
     
     client = docker.from_env()
