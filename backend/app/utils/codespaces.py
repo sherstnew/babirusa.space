@@ -82,7 +82,8 @@ async def check_container_status(pupils):
     for pupil in pupils:
         usernames.append(pupil.username)
         
-    userips = await UserIp.find_many({"_id": {"$in": usernames}}).to_list()
+    logger.info(usernames)
+    userips = await UserIp.find_many({"username": {"$in": usernames}}).to_list()
     if not userips:
         logger.info("1")
         raise Error.PUPIL_NOT_FOUND
