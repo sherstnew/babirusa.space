@@ -11,7 +11,7 @@ services:
     ports:
       - "0.0.0.0:1000:80"
     network_mode: bridge
-    
+
   mitm:
     build:
       context: ./backend
@@ -56,6 +56,8 @@ services:
     restart: always
     env_file:
       - ./backend/.env
+    environment:
+      - HOST_BACKEND_PATH=${PWD}/backend
     depends_on:
       - mongo
       - mitm
