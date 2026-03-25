@@ -12,6 +12,10 @@ from app.utils.error import Error
 from app.utils.security import get_current_user
 from cryptography.fernet import Fernet
 from fastapi import APIRouter, Depends, Path
+import os
+import shutil
+
+import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -126,11 +130,13 @@ async def delete_pupil(
     container.remove(force=True, v=True)
 
     await userip.delete()
-
-    # for file in os.listdir("/babirusa"):
-    #     if file == f"user-{pupil.username}-prj":
-    #         os.remove(f"/babirusa/user-{pupil.username}-prj")
-    #     if file == f"user-{pupil.username}-config":
-    #         os.remove(f"/babirusa/user-{pupil.username}-config")
-
+    
+    user_prj_path = f"/babirusa/user-{pupil.username}-prj"
+    user_config_path = f"/babirusa/user-{pupil.username}-config"
+    
+    if os.path.exists(user_prj_path):
+        shutil.rmtree(user_prj_path)
+    if os.path.exists(user_config_path):
+        shutil.rmtree(user_config_path)
+        
     return "OK"
