@@ -1,5 +1,7 @@
 from groq import Groq
 from app import AI_API_KEY
+import uuid
+import requests
 
 context = ''' 
             "Ты проверяешь домашние задания учеников по программированию.
@@ -16,22 +18,66 @@ context = '''
 '''
 
 
+# def groq_chat(prompt, code):
+
+#     client = Groq(
+#         api_key=AI_API_KEY
+#     )
+
+#     completion = client.chat.completions.create(
+#         model="openai/gpt-oss-20b",
+#         messages=[
+#             {
+#                 "role": "user",
+#                 "content": f"\n{context} + \nЗадание данное ученику: {prompt}" + "\nКод его решения: {code}"
+#             }
+#         ],
+#         temperature=0.6,
+#         max_completion_tokens=4096
+#     )
+
+#     return completion.choices[0].message.content
+
+def get_token():
+    url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
+
+    headers = {        
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+        "RqUID": str(uuid.uuid4()),
+        "Authorization": f"Basic {AI_API_KEY}",
+    }
+
+    data = {
+        "scope": "GIGACHAT_API_PERS"
+    }
+
+    response = requests.post(url, headers=headers, data=data, verify=False)
+    return response.json()["access_token"]
+
+
 def groq_chat(prompt, code):
 
-    client = Groq(
-        api_key=AI_API_KEY
-    )
+    token = get_token()
 
-    completion = client.chat.completions.create(
-        model="openai/gpt-oss-20b",
-        messages=[
+    url = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "GigaChat",
+        "messages": [
             {
                 "role": "user",
-                "content": f"\n{context} + \nЗадание данное ученику: {prompt}" + "\nКод его решения: {code}"
+                "content": f"\n{context} + \nЗадание данное ученику: {prompt}" + f"\nКод его решения: {code}"
             }
         ],
-        temperature=0.6,
-        max_completion_tokens=4096
-    )
+        "temperature": 0.6
+    }
 
-    return completion.choices[0].message.content
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    return response.json()["choices"][0]["message"]["content"]
