@@ -64,6 +64,7 @@ services:
     volumes:
       - ./backend:/app
       - /var/run/docker.sock:/var/run/docker.sock
+      - /babirusa.space/backend/babirusa:/babirusa
     network_mode: bridge
 
   mongo:
