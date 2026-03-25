@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from datetime import timedelta
 
-from app.data.models import Teacher
+from app.data.models import Pupil, Teacher
 from app.data import schemas
 from app.utils.error import Error
 from app.utils.auth import create_user, authenticate_user
@@ -78,14 +78,18 @@ async def delete_teacher(teacher_id: str, x_admin_password: Annotated[str, Heade
     
     
 @router.post("/template")
-async def create_code_temlate(request: schemas.CreateTemplate, current_teacher: Teacher = Depends(get_current_user)) -> str:
+async def create_code_temlate(request: schemas.CreateTemplate, _: Teacher = Depends(get_current_user)) -> str:
     with open(os.path.dirname(os.path.realpath(__file__)) + '../../../babirusa/baseprj') as f:
         f.write(request.code)
         
     return "OK"
 
 @router.post("/check_task_ai")
-async def check_task_ai(request: schemas.CheckTaskRequest, current_teacher: Teacher = Depends(get_current_user)) -> str:
+async def check_task_ai(request: schemas.CheckTaskRequest, _: Teacher = Depends(get_current_user)) -> dict:
+    pupil = await Pupil.find_one(Pupil.username == request.pupil_username)
+    if not pupil:
+        raise Error.PUPIL_NOT_FOUND_EXCEPTION
+    
     file_path = f"/app/backend/babirusa/user-{request.pupil_username}-prj/main.py"
     with open(file_path, 'r') as f:
         code = f.read()
