@@ -1,3 +1,5 @@
+import shutil
+
 from fastapi import APIRouter, Depends, Path
 from cryptography.fernet import Fernet
 
@@ -122,10 +124,12 @@ async def delete_pupil(pupil_id: Annotated[str, Path()],
     
     await userip.delete()
     
-    # for file in os.listdir("/babirusa"):
-    #     if file == f"user-{pupil.username}-prj":
-    #         os.remove(f"/babirusa/user-{pupil.username}-prj")
-    #     if file == f"user-{pupil.username}-config":
-    #         os.remove(f"/babirusa/user-{pupil.username}-config")
+    user_prj_path = f"/babirusa/user-{pupil.username}-prj"
+    user_config_path = f"/babirusa/user-{pupil.username}-config"
+    
+    if os.path.exists(user_prj_path):
+        shutil.rmtree(user_prj_path)
+    if os.path.exists(user_config_path):
+        shutil.rmtree(user_config_path)
         
     return "OK"

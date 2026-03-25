@@ -59,3 +59,7 @@ class PupilPassword(BaseModel):
     
 class CreateTemplate(BaseModel):
     code: str
+    
+class CheckTaskRequest(BaseModel):
+    prompt: str
+    pupil_username: str

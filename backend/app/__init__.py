@@ -7,6 +7,8 @@ load_dotenv()
 MONGO_DSN = getenv("MONGO_DSN")
 MONGO_DSN_TEST = getenv("MONGO_DSN_TEST")
 
+AI_API_KEY = getenv("AI_API_KEY")
+
 ENVIRONMENT = getenv("ENVIRONMENT")
 
 ALGORITHM = getenv("ALGORITHM")
