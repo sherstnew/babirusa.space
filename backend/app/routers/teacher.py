@@ -86,8 +86,8 @@ async def create_code_temlate(request: schemas.CreateTemplate, current_teacher: 
 
 @router.post("/check_task_ai")
 async def check_task_ai(request: schemas.CheckTaskRequest, current_teacher: Teacher = Depends(get_current_user)) -> str:
-    # file_path = f"/app/babirusa/user-{request.pupil_username}-prj/main.py"
-    with open(os.path.dirname(os.path.realpath(__file__)) + f'../../../babirusa/user-{request.pupil_username}-prj/main.py') as f:
+    file_path = f"/app/babirusa/user-{request.pupil_username}-prj/main.py"
+    with open(file_path, 'r') as f:
         code = f.read()
     
     answer = groq_chat(request.prompt, code)
