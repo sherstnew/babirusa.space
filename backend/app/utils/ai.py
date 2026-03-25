@@ -1,7 +1,9 @@
-from groq import Groq
+
 from app import AI_API_KEY
 import uuid
 import requests
+import uuid
+
 
 context = ''' 
             "Ты проверяешь домашние задания учеников по программированию.
@@ -16,27 +18,6 @@ context = '''
             например чтобы посмотреть другие файлы проекта. 
             Отвечай ТОЛЬКО на русском языке. Верни ТОЛЬКО JSON.
 '''
-
-
-# def groq_chat(prompt, code):
-
-#     client = Groq(
-#         api_key=AI_API_KEY
-#     )
-
-#     completion = client.chat.completions.create(
-#         model="openai/gpt-oss-20b",
-#         messages=[
-#             {
-#                 "role": "user",
-#                 "content": f"\n{context} + \nЗадание данное ученику: {prompt}" + "\nКод его решения: {code}"
-#             }
-#         ],
-#         temperature=0.6,
-#         max_completion_tokens=4096
-#     )
-
-#     return completion.choices[0].message.content
 
 def get_token():
     url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
