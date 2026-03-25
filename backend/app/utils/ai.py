@@ -1,4 +1,6 @@
 
+import json
+
 from app import AI_API_KEY
 import uuid
 import requests
@@ -60,5 +62,4 @@ def groq_chat(prompt, code):
     }
 
     response = requests.post(url, headers=headers, json=payload, verify=False)
-
-    return response.json()["choices"][0]["message"]["content"]
+    return json.loads(response.json()["choices"][0]["message"]["content"])
