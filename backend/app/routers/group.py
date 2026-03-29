@@ -190,10 +190,10 @@ async def add_pupil_in_group(request: schemas.AddPupil, _: Teacher = Depends(get
     
 
 @router.delete("/pupils")
-async def remove_pupils_from_group(group_id: Annotated[str, Query()], 
+async def remove_pupils_from_group(groups_id: Annotated[str, Query()], 
                                    pupil_id: Annotated[list, Query()],
                                     _: Teacher = Depends(get_current_user)) -> schemas.Group:
-    group = await Group.find_one(Group.id == uuid.UUID(group_id), fetch_links=True)
+    group = await Group.find_one(Group.id == uuid.UUID(groups_id), fetch_links=True)
     if not group:
         raise Error.GROUP_NOT_FOUND
 
