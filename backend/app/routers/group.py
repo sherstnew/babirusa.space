@@ -120,15 +120,16 @@ async def update_teacher_group(request: schemas.UpdateGroup,
     )
     
 @router.delete("")
-async def delete_teacher_groups(groups_id: Annotated[List[str], Query()],
+async def delete_teacher_groups(group_id: Annotated[str, Query()],
                                _: Teacher = Depends(get_current_user)) -> str:
     
-    groups = await Group.find({ "_id": { "$in": [uuid.UUID(id) for id in groups_id] }}, fetch_links=True).to_list()
-    if not groups:
+    # groups = await Group.find({ "_id": { "$in": [uuid.UUID(id) for id in groups_id] }}, fetch_links=True).to_list()
+    group = await Group.find_one(Group.id == uuid.UUID(group_id), fetch_links=True)
+    if not group:
         raise Error.GROUP_NOT_FOUND
 
-    for group in groups:  
-        await group.delete()
+    # for group in groups:  
+    #     await group.delete()
     
     return "OK"
     

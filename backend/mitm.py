@@ -19,7 +19,7 @@ db = client.get_default_database()
 def request(flow: http.HTTPFlow) -> None:
     host = flow.request.pretty_host
 
-    if "babirusa.space" not in host:
+    if "babirusa.website" not in host:
         flow.kill()
         return
 
@@ -37,8 +37,8 @@ def request(flow: http.HTTPFlow) -> None:
         
         if path in SUBDOMAIN_TO_PORT:
             new_ip = SUBDOMAIN_TO_PORT[path]
-            flow.request.headers["Host"] = f"babirusa.space"
-            flow.request.headers["X-Forwarded-Host"] = f"babirusa.space/{path}"
+            flow.request.headers["Host"] = f"babirusa.website"
+            flow.request.headers["X-Forwarded-Host"] = f"babirusa.website/{path}"
             flow.request.headers["X-Forwarded-Proto"] = "https"
             flow.websocket_proxy = True
             flow.request.host = new_ip
@@ -50,8 +50,8 @@ def request(flow: http.HTTPFlow) -> None:
         subdomain = host.split(".")[0]
         if subdomain in SUBDOMAIN_TO_PORT:
             new_ip = SUBDOMAIN_TO_PORT[subdomain]
-            flow.request.headers["Host"] = f"{subdomain}.babirusa.space"
-            flow.request.headers["X-Forwarded-Host"] = f"{subdomain}.babirusa.space"
+            flow.request.headers["Host"] = f"{subdomain}.babirusa.website"
+            flow.request.headers["X-Forwarded-Host"] = f"{subdomain}.babirusa.website"
             flow.request.headers["X-Forwarded-Proto"] = "https"
             flow.websocket_proxy = True
             flow.request.host = new_ip

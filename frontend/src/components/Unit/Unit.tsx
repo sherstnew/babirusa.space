@@ -256,7 +256,7 @@ export function Unit({ unit, groupId, groups }: IUnitProps) {
           {password ? password : "Пароль"}
         </div>
         <Link
-          to={`https://${unit.username}.babirusa.space`}
+          to={`https://${unit.username}.babirusa.website`}
           target="_blank"
           className={styles.action}
         >
@@ -278,7 +278,7 @@ export function Unit({ unit, groupId, groups }: IUnitProps) {
         ) : (
           <>
             <div className={styles.action} onClick={() => deleteUnit(unit.id)}>
-              Удалить
+              fetch_links=True
             </div>
             {groups ? (
               <select
